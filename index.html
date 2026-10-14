@@ -1,0 +1,215 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AquaLuz Lab</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+  <header>
+    <a class="logo" href="#inicio">☀ AquaLuz Lab</a>
+    <button id="menuToggle" aria-expanded="false" aria-controls="menu">☰ Menu</button>
+    <nav id="menu" aria-label="Menu principal">
+      <a href="#ondas">Ondas</a>
+      <a href="#termica">Calor solar</a>
+      <a href="#fotovoltaica">Energia solar</a>
+      <a href="#robotica">Sensores</a>
+      <a href="#mapa">Mapa do site</a>
+    </nav>
+  </header>
+
+  <div class="acessibilidade">
+    <button id="contraste">Alto contraste</button>
+    <button id="fonte">Fonte de leitura</button>
+    <button id="aumentar">A+</button>
+    <button id="diminuir">A−</button>
+  </div>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <span class="etiqueta">FÍSICA • TECNOLOGIA • ROBÓTICA</span>
+      <h1>A ciência que transforma <span>Sol em energia.</span></h1>
+      <p>Descubra como a luz aquece a água, gera eletricidade e permite criar uma piscina inteligente.</p>
+      <a class="botao" href="#termica">Explorar laboratório ↗</a>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="sol">☀</div>
+        <div class="agua"><span>≈ ≈ ≈ ≈ ≈</span></div>
+        <div class="painel-solar">▦ ▦ ▦<br>▦ ▦ ▦</div>
+      </div>
+    </section>
+
+    <section class="secao" id="ondas">
+      <span class="etiqueta">01 / TECNOCIÊNCIA</span>
+      <h2>O universo das ondas</h2>
+      <p>Explore as regiões do espectro eletromagnético.</p>
+
+      <div class="espectro" aria-hidden="true">
+        <span>Rádio</span><span>Micro</span><span>Infra</span>
+        <span>Visível</span><span>UV</span><span>Raios X</span><span>Gama</span>
+      </div>
+
+      <label for="onda">Escolha uma onda:</label>
+      <select id="onda">
+        <option value="radio">Ondas de rádio</option>
+        <option value="micro">Micro-ondas</option>
+        <option value="infra" selected>Infravermelho</option>
+        <option value="visivel">Luz visível</option>
+        <option value="uv">Ultravioleta</option>
+        <option value="x">Raios X</option>
+        <option value="gama">Raios gama</option>
+      </select>
+
+      <div class="onda-animada" aria-hidden="true"><div id="ondaVisual"></div></div>
+      <h3 id="ondaTitulo">Infravermelho</h3>
+      <p id="ondaTexto" aria-live="polite">A piscina emite radiação infravermelha ao perder calor.</p>
+      <p id="ondaDado"></p>
+    </section>
+
+    <section class="secao" id="termica">
+      <span class="etiqueta">02 / LABORATÓRIO TÉRMICO</span>
+      <h2>O Sol aquece. A piscina perde calor.</h2>
+      <p>Modifique as condições e observe os resultados do modelo.</p>
+
+      <div class="grade">
+        <div class="cartao controles">
+          <label for="sol">Intensidade solar: <output id="solValor">75%</output></label>
+          <input id="sol" type="range" min="0" max="100" value="75">
+
+          <label for="absorcao">Absorção do coletor: <output id="absValor">85%</output></label>
+          <input id="absorcao" type="range" min="0" max="100" value="85">
+
+          <label for="capa">Proteção da piscina:</label>
+          <select id="capa">
+            <option value="0">Sem capa térmica</option>
+            <option value="35">Com capa térmica</option>
+          </select>
+
+          <button id="calcular" class="botao">Simular aquecimento</button>
+        </div>
+
+        <div class="cartao piscina">
+          <div class="sol-grande" aria-hidden="true">☀</div>
+          <div class="agua-grande" aria-hidden="true">≈ ≈ ≈ ≈</div>
+          <h3 id="temperatura">26,0 °C</h3>
+          <p>Temperatura ilustrativa da piscina</p>
+          <div class="barra"><div id="barraCalor"></div></div>
+          <p id="resultadoCalor" aria-live="polite">Pronto para simular.</p>
+        </div>
+      </div>
+
+      <div class="explicacao">
+        <h3>O que é radiação de corpo negro?</h3>
+        <p>Um corpo negro ideal absorve toda a radiação incidente e emite radiação de acordo com sua temperatura. Um coletor solar real pode absorver a luz e convertê-la em calor, aquecendo a água.</p>
+        <p>A piscina também emite infravermelho e perde calor por evaporação e outros mecanismos. Uma capa térmica pode reduzir principalmente a evaporação e ajudar a conservar o calor.</p>
+      </div>
+    </section>
+
+    <section class="secao" id="fotovoltaica">
+      <span class="etiqueta">03 / EFEITO FOTOELÉTRICO</span>
+      <h2>Luz que vira eletricidade</h2>
+      <p>Os painéis fotovoltaicos usam a interação da luz com um semicondutor para gerar corrente elétrica.</p>
+
+      <div class="cartao">
+        <label for="luz">Intensidade da luz: <output id="luzValor">70%</output></label>
+        <input id="luz" type="range" min="0" max="100" value="70">
+
+        <label for="fotons">Energia dos fótons:</label>
+        <select id="fotons">
+          <option value="1.2">Baixa — 1,2 eV</option>
+          <option value="1.8" selected>Intermediária — 1,8 eV</option>
+          <option value="2.5">Alta — 2,5 eV</option>
+        </select>
+
+        <div class="painel-visual" aria-hidden="true">▦ ▦ ▦ ▦<br>▦ ▦ ▦ ▦<br>⚡</div>
+        <h3 id="geracao">Geração simulada: 70%</h3>
+        <p id="explicacaoPV" aria-live="polite">A geração depende da luz incidente e das características da célula.</p>
+      </div>
+
+      <div class="explicacao">
+        <h3>Efeito fotoelétrico e células solares</h3>
+        <p>No efeito fotoelétrico externo, a luz pode arrancar elétrons de um material. Nas células fotovoltaicas, a luz gera portadores de carga dentro do semicondutor, permitindo produzir eletricidade. São fenômenos relacionados, mas não idênticos.</p>
+        <p>A eletricidade solar pode alimentar equipamentos da piscina, desde que o sistema seja corretamente dimensionado.</p>
+      </div>
+    </section>
+
+    <section class="secao" id="robotica">
+      <span class="etiqueta">04 / ROBÓTICA</span>
+      <h2>Uma piscina inteligente</h2>
+      <p>Altere os sensores virtuais e observe as decisões automáticas.</p>
+
+      <div class="grade">
+        <div class="cartao">
+          <label for="temperaturaSensor">Temperatura da água: <output id="tempSensorValor">28 °C</output></label>
+          <input id="temperaturaSensor" type="range" min="10" max="40" value="28">
+
+          <label for="luzSensor">Luminosidade: <output id="luzSensorValor">70%</output></label>
+          <input id="luzSensor" type="range" min="0" max="100" value="70">
+
+          <label for="nivelSensor">Nível da água: <output id="nivelSensorValor">80%</output></label>
+          <input id="nivelSensor" type="range" min="0" max="100" value="80">
+        </div>
+
+        <div class="cartao">
+          <h3>Central de automação</h3>
+          <div class="sensor-status"><span>●</span> Sensor de temperatura</div>
+          <div class="sensor-status"><span>●</span> Sensor de luminosidade</div>
+          <div class="sensor-status"><span>●</span> Sensor de nível</div>
+          <h3>Decisão do controlador</h3>
+          <p id="decisao" aria-live="polite">Sistema em monitoramento.</p>
+        </div>
+      </div>
+
+      <div class="explicacao">
+        <h3>Como funcionaria na prática?</h3>
+        <p>Um sensor mede uma grandeza física. Um microcontrolador processa os dados e pode acionar dispositivos, como bombas ou válvulas, por meio de circuitos apropriados.</p>
+        <p>Este site demonstra a lógica por simulação: não está conectado a sensores ou equipamentos reais.</p>
+      </div>
+    </section>
+
+    <section class="secao acessibilidade-secao" id="acessibilidade">
+      <span class="etiqueta">CIÊNCIA PARA TODOS</span>
+      <h2>Acessibilidade também é tecnologia.</h2>
+      <p>O site oferece navegação por teclado, textos ajustáveis, alto contraste e áreas preparadas para conteúdos em Libras.</p>
+      <div class="cartao">
+        <h3>Espaço para vídeo em Libras</h3>
+        <p>Adicione aqui um vídeo produzido ou autorizado para explicar o projeto em Libras.</p>
+        <div class="video-placeholder" aria-label="Espaço reservado para vídeo em Libras">Vídeo em Libras — inserir arquivo autorizado</div>
+        <h3>Assistente de acessibilidade em Libras</h3>
+        <p>O VLibras pode ser integrado pelo site oficial. A tradução automática pode ter limitações; vídeos revisados por profissionais ajudam a garantir clareza.</p>
+        <a href="https://vlibras.gov.br/" target="_blank" rel="noopener noreferrer">Conhecer o VLibras ↗</a>
+      </div>
+    </section>
+
+    <section class="secao" id="mapa">
+      <span class="etiqueta">NAVEGAÇÃO</span>
+      <h2>Mapa do site</h2>
+      <div class="mapa">
+        <a href="#inicio">01 — Início</a>
+        <a href="#ondas">02 — Ondas eletromagnéticas</a>
+        <a href="#termica">03 — Simulador térmico</a>
+        <a href="#fotovoltaica">04 — Efeito fotoelétrico</a>
+        <a href="#robotica">05 — Sensores e automação</a>
+        <a href="#acessibilidade">06 — Acessibilidade e Libras</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="logo" href="#inicio">☀ AquaLuz Lab</a>
+    <p>Projeto educacional de Física, Programação e Robótica.</p>
+    <p>Energia consciente. Tecnologia acessível. Água sustentável.</p>
+    <a href="#inicio">Voltar ao topo ↑</a>
+  </footer>
+
+  <script>
+    // O VLibras pode ser habilitado adicionando o widget oficial
+    // conforme as instruções atualizadas do site vlibras.gov.br.
+  </script>
+</body>
+</html>
+
