@@ -1,762 +1,536 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-:root {
-  --fundo: #0a0e22;
-  --painel: #111831;
-  --texto: #f4f6ff;
-  --suave: #aab4d1;
-  --roxo: #a58bff;
-  --ciano: #5be4ef;
-  --azul: #6ea8ff;
-  --borda: rgba(173,190,255,.16);
-}
-
-* { box-sizing: border-box; }
-
-html {
-  scroll-behavior: smooth;
-  scroll-padding-top: 85px;
-}
-
-body {
-  margin: 0;
-  background:
-    radial-gradient(ellipse at 80% 5%, rgba(70,57,154,.2), transparent 35%),
-    var(--fundo);
-  color: var(--texto);
-  font-family: 'DM Sans', sans-serif;
-  line-height: 1.6;
-}
-
-a { color: inherit; text-decoration: none; }
-button, input { font: inherit; }
-button, a, input { -webkit-tap-highlight-color: transparent; }
-
-button:focus-visible, a:focus-visible, input:focus-visible {
-  outline: 3px solid var(--ciano);
-  outline-offset: 4px;
-}
-
-.pular-conteudo {
-  position: absolute;
-  left: -9999px;
-  top: 8px;
-  z-index: 1000;
-  background: white;
-  color: #111;
-  padding: 10px;
-}
-
-.pular-conteudo:focus { left: 10px; }
-
-h1, h2, h3 {
-  font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -.04em;
-  line-height: 1.2;
-}
-
-h2 { font-size: clamp(1.9rem, 4vw, 2.7rem); }
-p { margin-top: 0; }
-
-.topo {
-  min-height: 76px;
-  max-width: 1200px;
-  margin: auto;
-  padding: 16px 28px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  position: relative;
-  z-index: 10;
-}
-
-.marca {
-  font: 700 1.15rem 'Space Grotesk', sans-serif;
-  white-space: nowrap;
-}
-
-.marca strong { color: var(--ciano); }
-
-.menu {
-  display: flex;
-  gap: clamp(14px, 3vw, 32px);
-  color: var(--suave);
-  font-size: .88rem;
-}
-
-.menu a:hover, .rodape a:hover { color: var(--ciano); }
-
-.menu-botao {
-  display: none;
-  color: var(--texto);
-  background: transparent;
-  border: 1px solid var(--borda);
-  border-radius: 10px;
-  padding: 8px 12px;
-}
-
-.hero {
-  max-width: 1200px;
-  min-height: 490px;
-  margin: auto;
-  padding: 60px 28px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-  gap: 30px;
-}
-
-.etiqueta, .sobretitulo {
-  color: var(--ciano);
-  font-size: .69rem;
-  font-weight: 700;
-  letter-spacing: .15em;
-}
-
-.etiqueta {
-  display: inline-block;
-  border: 1px solid rgba(91,228,239,.25);
-  border-radius: 30px;
-  padding: 8px 12px;
-  background: rgba(91,228,239,.06);
-}
-
-.hero h1 {
-  font-size: clamp(2.7rem, 5.5vw, 4.4rem);
-  margin: 22px 0;
-}
-
-.hero h1 span { color: var(--roxo); }
-
-.hero-texto > p, .cabecalho > p {
-  color: var(--suave);
-  line-height: 1.8;
-}
-
-.hero-texto > p { max-width: 520px; }
-
-.hero-acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin: 28px 0;
-}
-
-.botao {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 17px;
-  font-weight: 700;
-  font-size: .85rem;
-  cursor: pointer;
-  transition: transform .2s, filter .2s;
-}
-
-.botao:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-}
-
-.primario {
-  color: #10142d;
-  background: linear-gradient(110deg, var(--ciano), #a3f4e7);
-}
-
-.secundario {
-  color: var(--texto);
-  border: 1px solid var(--borda);
-  background: rgba(255,255,255,.025);
-}
-
-.hero-notas {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  color: var(--suave);
-  font-size: .75rem;
-}
-
-.hero-notas b {
-  color: var(--texto);
-  font: 700 1.1rem 'Space Grotesk', sans-serif;
-}
-
-.hero-arte {
-  min-height: 340px;
-  display: grid;
-  place-items: center;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.hero-arte::before {
-  content: '';
-  position: absolute;
-  width: 90%;
-  height: 90%;
-  background: radial-gradient(circle, rgba(105,89,255,.23), transparent 67%);
-  z-index: -2;
-}
-
-.orb {
-  width: 175px;
-  height: 175px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 32% 25%, #d7ffff, #61dbe9 30%, #6253cf 70%, #292052);
-  box-shadow: 0 0 80px rgba(111,107,255,.4);
-}
-
-.anel {
-  position: absolute;
-  width: 300px;
-  height: 125px;
-  border: 1px solid rgba(130,156,255,.35);
-  border-radius: 50%;
-  transform: rotate(-25deg);
-}
-
-.anel2 {
-  width: 340px;
-  height: 160px;
-  transform: rotate(35deg);
-  border-color: rgba(91,228,239,.3);
-}
-
-.anel3 {
-  width: 230px;
-  height: 290px;
-  transform: rotate(60deg);
-  border-style: dashed;
-}
-
-.cartao-flutuante {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 14px;
-  border: 1px solid var(--borda);
-  border-radius: 14px;
-  background: rgba(15,22,49,.92);
-  box-shadow: 0 15px 45px rgba(0,0,0,.2);
-  font-size: .85rem;
-}
-
-.cartao-flutuante small {
-  display: block;
-  color: var(--suave);
-  font-size: .65rem;
-}
-
-.luz { top: 12%; left: 0; }
-.agua { right: 0; bottom: 10%; }
-
-.faixa {
-  max-width: 1144px;
-  margin: 0 auto 35px;
-  padding: 22px 28px;
-  border-block: 1px solid var(--borda);
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-.faixa > div {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.faixa b {
-  color: var(--roxo);
-  font: 700 1.5rem 'Space Grotesk', sans-serif;
-}
-
-.faixa span { font-size: .86rem; }
-.faixa small { display: block; color: var(--suave); font-size: .72rem; }
-
-.secao {
-  max-width: 1200px;
-  margin: auto;
-  padding: 65px 28px;
-}
-
-.cabecalho {
-  display: flex;
-  align-items: end;
-  justify-content: space-between;
-  gap: 30px;
-  margin-bottom: 30px;
-}
-
-.cabecalho h2 { margin: 10px 0 0; }
-
-.cabecalho > p {
-  max-width: 430px;
-  font-size: .88rem;
-  margin-bottom: 0;
-}
-
-.cartoes, .graficos-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 17px;
-}
-
-.card-ciencia, .painel {
-  border: 1px solid var(--borda);
-  border-radius: 22px;
-  background: linear-gradient(145deg, rgba(22,31,64,.95), rgba(13,19,43,.95));
-}
-
-.card-ciencia { padding: 24px; }
-
-.icone {
-  width: 45px;
-  height: 45px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  font-size: 1.5rem;
-  margin-bottom: 22px;
-}
-
-.violeta { color: var(--roxo); background: rgba(165,139,255,.15); }
-.azul { color: var(--azul); background: rgba(110,168,255,.14); }
-.ciano { color: var(--ciano); background: rgba(91,228,239,.12); }
-
-.numero-card {
-  display: block;
-  color: var(--suave);
-  font-size: .65rem;
-  font-weight: 700;
-  letter-spacing: .12em;
-}
-
-.card-ciencia h3 { font-size: 1.2rem; margin: 10px 0; }
-.card-ciencia p { color: var(--suave); font-size: .82rem; line-height: 1.8; }
-
-.mini-grafico {
-  display: flex;
-  align-items: end;
-  gap: 5px;
-  height: 35px;
-  margin: 22px 0 12px;
-}
-
-.mini-grafico i {
-  flex: 1;
-  border-radius: 5px 5px 0 0;
-  background: linear-gradient(var(--roxo), rgba(128,92,255,.12));
-}
-
-.mini-grafico i:nth-child(1) { height: 15%; }
-.mini-grafico i:nth-child(2) { height: 25%; }
-.mini-grafico i:nth-child(3) { height: 40%; }
-.mini-grafico i:nth-child(4) { height: 70%; }
-.mini-grafico i:nth-child(5) { height: 95%; }
-.mini-grafico i:nth-child(6) { height: 50%; }
-.mini-grafico i:nth-child(7) { height: 20%; }
-
-.destaque {
-  border-top: 1px solid var(--borda);
-  padding-top: 12px;
-  color: var(--texto) !important;
-  font-size: .75rem !important;
-}
-
-.fluxo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 5px;
-  margin: 22px 0;
-  color: var(--roxo);
-  font-size: .75rem;
-}
-
-.fluxo span {
-  padding: 7px;
-  border: 1px solid var(--borda);
-  border-radius: 8px;
-  color: var(--texto);
-}
-
-.simulador-secao {
-  max-width: none;
-  background: linear-gradient(180deg, rgba(80,65,160,.08), transparent);
-}
-
-.simulador-secao > .cabecalho,
-.simulador-grid,
-#graficos > .cabecalho,
-.graficos-grid,
-#sensores > .cabecalho,
-.sensores-grid {
-  max-width: 1144px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.simulador-grid, .sensores-grid {
-  display: grid;
-  grid-template-columns: .85fr 1.15fr;
-  gap: 18px;
-}
-
-.painel { padding: 24px; min-width: 0; }
-.painel h3 { margin-top: 5px; }
-.subtexto { color: var(--suave); font-size: .85rem; }
-
-.controle { margin: 25px 0; }
-
-.controle label {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: .83rem;
-  font-weight: 600;
-  margin-bottom: 13px;
-}
-
-.controle output {
-  color: var(--ciano);
-  font-family: 'Space Grotesk', sans-serif;
-  white-space: nowrap;
-}
-
-input[type="range"] {
-  width: 100%;
-  accent-color: var(--ciano);
-  cursor: pointer;
-}
-
-.limites {
-  display: flex;
-  justify-content: space-between;
-  color: #8793b5;
-  font-size: .68rem;
-  margin-top: 7px;
-}
-
-.aviso {
-  border-top: 1px solid var(--borda);
-  padding-top: 15px;
-  color: var(--suave);
-  font-size: .72rem;
-}
-
-.piscina {
-  height: 210px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid rgba(91,228,239,.18);
-  border-radius: 16px;
-  margin: 18px 0 23px;
-  background: linear-gradient(180deg, #1b2451, #111d45 55%, #132d56);
-}
-
-.sol-visual {
-  position: absolute;
-  right: 18%;
-  top: 12px;
-  color: #ffe7a2;
-  font-size: 2.5rem;
-  filter: drop-shadow(0 0 18px rgba(255,224,134,.55));
-  transition: opacity .2s;
-}
-
-.agua-piscina {
-  position: absolute;
-  left: -5%;
-  right: -5%;
-  bottom: -30px;
-  height: 130px;
-  border-radius: 50% 50% 0 0;
-  background: linear-gradient(180deg, #48d9e5, #2479bd 60%, #183d83);
-  box-shadow: inset 0 10px 25px rgba(163,255,255,.25);
-}
-
-.onda {
-  position: absolute;
-  top: 10px;
-  left: -5%;
-  width: 110%;
-  height: 40px;
-  border-top: 2px solid rgba(210,255,255,.5);
-  border-radius: 50%;
-  transform: rotate(-3deg);
-}
-
-.onda2 { top: 25px; transform: rotate(3deg); opacity: .6; }
-
-.termometro {
-  position: absolute;
-  left: 16px;
-  top: 16px;
-  display: flex;
-  flex-direction: column;
-  padding: 10px 12px;
-  border: 1px solid var(--borda);
-  border-radius: 12px;
-  background: rgba(10,15,38,.8);
-}
-
-.termometro strong { font: 700 1.3rem 'Space Grotesk', sans-serif; }
-.termometro small { color: var(--suave); font-size: .63rem; }
-
-.metricas {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-}
-
-.metricas > div > span {
-  display: block;
-  color: var(--suave);
-  font-size: .7rem;
-  min-height: 38px;
-}
-
-.metricas strong {
-  display: block;
-  font: 600 1.1rem 'Space Grotesk', sans-serif;
-  margin: 4px 0 9px;
-}
-
-.barra {
-  height: 5px;
-  border-radius: 99px;
-  background: rgba(255,255,255,.08);
-  overflow: hidden;
-}
-
-.barra i {
-  display: block;
-  width: 30%;
-  height: 100%;
-  background: linear-gradient(90deg, var(--roxo), var(--ciano));
-  transition: width .2s;
-}
-
-.mensagem {
-  margin: 20px 0 0;
-  padding: 12px;
-  border: 1px solid rgba(91,228,239,.17);
-  border-radius: 11px;
-  background: rgba(91,228,239,.055);
-  color: #d9fbff;
-  font-size: .78rem;
-}
-
-.graficos-grid { grid-template-columns: 1fr 1fr; }
-.grafico-card h3 { margin: 8px 0; }
-.grafico-card > p { color: var(--suave); font-size: .8rem; }
-
-.legenda {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  color: var(--suave);
-  font-size: .68rem;
-  margin: 14px 0;
-}
-
-.legenda span { display: flex; align-items: center; gap: 7px; }
-.legenda i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-.ponto-roxo { background: var(--roxo); }
-.ponto-ciano { background: var(--ciano); }
-
-canvas { width: 100%; height: 220px; display: block; }
-
-.eixos {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  color: #8d99b8;
-  font-size: .62rem;
-}
-
-.grafico-card > small { color: #8793b5; font-size: .67rem; }
-
-.decisao { position: relative; overflow: hidden; }
-.decisao h3 { font-size: 1.5rem; }
-.decisao > p { color: var(--suave); font-size: .9rem; line-height: 1.8; }
-
-.status {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  margin: 20px 0;
-  color: var(--ciano);
-  font-size: .75rem;
-}
-
-.status i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--ciano);
-  box-shadow: 0 0 12px var(--ciano);
-}
-
-.log {
-  display: flex;
-  gap: 10px;
-  padding: 12px;
-  border: 1px solid var(--borda);
-  border-radius: 10px;
-  background: rgba(3,8,24,.25);
-}
-
-.log span { color: var(--ciano); }
-.log p { color: #9faccb; font: .72rem/1.6 monospace; margin: 0; }
-
-.desafio-secao {
-  display: grid;
-  grid-template-columns: .8fr 1.2fr;
-  gap: 35px;
-  align-items: center;
-}
-
-.quiz-progresso {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  color: var(--ciano);
-  font-size: .65rem;
-  font-weight: 700;
-}
-
-.quiz-progresso > div {
-  width: 95px;
-  height: 4px;
-  border-radius: 9px;
-  background: rgba(255,255,255,.1);
-  overflow: hidden;
-}
-
-.quiz-progresso i {
-  display: block;
-  height: 100%;
-  width: 33%;
-  background: var(--ciano);
-  transition: width .2s;
-}
-
-.quiz-card h3 { font-size: 1.25rem; margin: 22px 0; }
-
-.opcoes-quiz { display: grid; gap: 9px; }
-
-.opcao-quiz {
-  text-align: left;
-  border: 1px solid var(--borda);
-  border-radius: 11px;
-  background: rgba(255,255,255,.025);
-  color: var(--texto);
-  padding: 12px 14px;
-  font-size: .81rem;
-  cursor: pointer;
-}
-
-.opcao-quiz:hover:not(:disabled) { border-color: var(--roxo); }
-.opcao-quiz:disabled { cursor: default; }
-.opcao-quiz.correta { border-color: #5be4af; background: rgba(91,228,175,.1); }
-.opcao-quiz.errada { border-color: #ff8fba; background: rgba(255,143,186,.09); }
-
-.feedback { color: var(--suave); font-size: .78rem; min-height: 24px; margin: 14px 0; }
-button:disabled { opacity: .45; cursor: not-allowed; }
-
-.cta-final {
-  max-width: 1144px;
-  margin: 15px auto 60px;
-  padding: 34px;
-  border: 1px solid rgba(165,139,255,.25);
-  border-radius: 24px;
-  background: linear-gradient(110deg, #171b43, #12213c);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 25px;
-}
-
-.cta-final h2 { margin: 10px 0; }
-.cta-final p { color: var(--suave); font-size: .83rem; margin: 0; }
-.claro { background: var(--texto); color: #141936; white-space: nowrap; }
-
-.rodape {
-  max-width: 1144px;
-  margin: auto;
-  padding: 22px 28px 32px;
-  border-top: 1px solid var(--borda);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  color: var(--suave);
-  font-size: .72rem;
-}
-
-.rodape p { margin: 0; }
-.rodape > a:last-child { color: var(--ciano); }
-
-@media (max-width: 850px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-arte { min-height: 300px; }
-  .cabecalho { align-items: start; flex-direction: column; gap: 12px; }
-  .cartoes { grid-template-columns: 1fr 1fr; }
-  .card-ciencia:last-child { grid-column: span 2; }
-  .simulador-grid, .sensores-grid { grid-template-columns: 1fr; }
-  .desafio-secao { grid-template-columns: 1fr; gap: 20px; }
-  .cta-final { margin-inline: 25px; }
-}
-
-@media (max-width: 600px) {
-  .topo { padding: 14px 18px; }
-  .menu-botao { display: block; }
-  .menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    left: 15px;
-    right: 15px;
-    padding: 14px;
-    border: 1px solid var(--borda);
-    border-radius: 14px;
-    background: #111831;
-    flex-direction: column;
-    gap: 0;
+"use strict";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const $ = (id) => document.getElementById(id);
+
+  // MENU PARA CELULAR
+  const menuBotao = $("menuBotao");
+  const menu = $("menu");
+
+  if (menuBotao && menu) {
+    menuBotao.addEventListener("click", () => {
+      const aberto = menu.classList.toggle("aberto");
+      menuBotao.setAttribute("aria-expanded", String(aberto));
+      menuBotao.setAttribute(
+        "aria-label",
+        aberto ? "Fechar menu" : "Abrir menu"
+      );
+    });
+
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        menu.classList.remove("aberto");
+        menuBotao.setAttribute("aria-expanded", "false");
+      });
+    });
   }
-  .menu.aberto { display: flex; }
-  .menu a { padding: 10px; }
-  .hero { padding: 40px 20px; }
-  .hero h1 { font-size: clamp(2.5rem, 11vw, 3.5rem); }
-  .hero-arte { min-height: 270px; }
-  .orb { width: 145px; height: 145px; }
-  .anel { width: 250px; }
-  .anel2 { width: 280px; }
-  .anel3 { height: 230px; }
-  .faixa { grid-template-columns: 1fr; margin-inline: 20px; padding: 20px 0; }
-  .secao { padding: 45px 20px; }
-  .cartoes, .graficos-grid { grid-template-columns: 1fr; }
-  .card-ciencia:last-child { grid-column: auto; }
-  .painel { padding: 20px; }
-  .metricas { gap: 9px; }
-  .metricas > div > span { font-size: .65rem; }
-  .metricas strong { font-size: .95rem; }
-  .cta-final { margin: 10px 20px 40px; padding: 24px; flex-direction: column; align-items: start; }
-  .cta-final .botao { width: 100%; }
-  .rodape { padding: 22px 20px; flex-wrap: wrap; }
-  .rodape p { flex-basis: 100%; order: 3; }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after { transition-duration: .01ms !important; }
-}
+  // SIMULADOR DA PISCINA
+  const controlesPiscina = ["sol", "cobertura", "aquecimento"];
+
+  function atualizarPiscina() {
+    const sol = Number($("sol").value);
+    const cobertura = Number($("cobertura").value);
+    const aquecimento = Number($("aquecimento").value);
+
+    $("solValor").textContent = sol + "%";
+    $("coberturaValor").textContent = cobertura + "%";
+    $("aquecimentoValor").textContent = aquecimento + "%";
+
+    $("energiaSolar").textContent = sol + "%";
+    $("calorConservado").textContent = cobertura + "%";
+    $("energiaAuxiliar").textContent = aquecimento + "%";
+
+    // Modelo didático ilustrativo, não uma previsão física real.
+    const temperatura =
+      18 +
+      sol * 0.10 +
+      cobertura * 0.035 +
+      aquecimento * 0.055;
+
+    $("temperaturaPiscina").textContent =
+      temperatura.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + " °C";
+
+    let mensagem;
+
+    if (sol < 25 && aquecimento < 25) {
+      mensagem = "Pouca energia disponível: o aquecimento será limitado.";
+    } else if (cobertura >= 70) {
+      mensagem = "Boa conservação de calor no modelo simulado!";
+    } else if (sol >= 70) {
+      mensagem = "A contribuição solar está elevada.";
+    } else {
+      mensagem = "Ajuste os controles e compare os resultados.";
+    }
+
+    $("mensagemPiscina").textContent = mensagem;
+    desenharGraficoSolar();
+  }
+
+  controlesPiscina.forEach((id) => {
+    $(id).addEventListener("input", atualizarPiscina);
+  });
+
+  $("resetPiscina").addEventListener("click", () => {
+    $("sol").value = 70;
+    $("cobertura").value = 50;
+    $("aquecimento").value = 20;
+    atualizarPiscina();
+  });
+
+  // DIMENSIONAMENTO DOS GRÁFICOS
+  function prepararCanvas(canvas) {
+    const largura = Math.max(260, canvas.clientWidth);
+    const altura = Math.max(200, canvas.clientHeight);
+    const escala = Math.min(window.devicePixelRatio || 1, 2);
+
+    canvas.width = Math.round(largura * escala);
+    canvas.height = Math.round(altura * escala);
+
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(escala, 0, 0, escala, 0, 0);
+
+    return { ctx, largura, altura };
+  }
+
+  function texto(ctx, valor, x, y, cor = "#b9c5e3", tamanho = 11) {
+    ctx.fillStyle = cor;
+    ctx.font = `${tamanho}px Arial`;
+    ctx.fillText(valor, x, y);
+  }
+
+  // GRÁFICO DA RADIAÇÃO DO CORPO NEGRO
+  function desenharGraficoCorpoNegro() {
+    const canvas = $("graficoCorpoNegro");
+    if (!canvas) return;
+
+    const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
+    const esquerda = 43;
+    const direita = 12;
+    const topo = 18;
+    const baixo = 37;
+    const gw = w - esquerda - direita;
+    const gh = h - topo - baixo;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#0b142b";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(185,197,227,.13)";
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i <= 4; i++) {
+      const y = topo + gh * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(esquerda, y);
+      ctx.lineTo(w - direita, y);
+      ctx.stroke();
+    }
+
+    for (let i = 0; i <= 4; i++) {
+      const x = esquerda + gw * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(x, topo);
+      ctx.lineTo(x, h - baixo);
+      ctx.stroke();
+    }
+
+    texto(ctx, "Intensidade relativa", 8, 13, "#b9c5e3", 10);
+    texto(ctx, "Comprimento de onda (nm)", w / 2 - 70, h - 9, "#b9c5e3", 10);
+
+    [200, 400, 600, 800, 1000].forEach((v, i) => {
+      texto(ctx, String(v), esquerda + gw * i / 4 - 10, h - 21);
+    });
+
+    const T = Number($("temperaturaCorpo").value);
+    $("temperaturaCorpoValor").textContent = T + " K";
+
+    // Lei de Planck: intensidade espectral relativa.
+    // Lambda é medido em metros.
+    function planck(lambdaNm, temperatura) {
+      const lambda = lambdaNm * 1e-9;
+      const c2 = 1.4387769e-2;
+      const expoente = c2 / (lambda * temperatura);
+
+      if (expoente > 700) return 0;
+
+      return 1 / (
+        Math.pow(lambda, 5) * Math.expm1(expoente)
+      );
+    }
+
+    const temperaturas = [
+      { valor: 3000, cor: "#a78bfa" },
+      { valor: T, cor: "#56e5f2" },
+      { valor: 5500, cor: "#7cf7c4" }
+    ];
+
+    const curvas = temperaturas.map((serie) => {
+      const pontos = [];
+
+      for (let lambda = 200; lambda <= 1000; lambda += 4) {
+        pontos.push({
+          lambda,
+          intensidade: planck(lambda, serie.valor)
+        });
+      }
+
+      const maximo = Math.max(...pontos.map(p => p.intensidade)) || 1;
+
+      return {
+        ...serie,
+        pontos: pontos.map(p => ({
+          lambda: p.lambda,
+          intensidade: p.intensidade / maximo
+        }))
+      };
+    });
+
+    curvas.forEach((serie) => {
+      ctx.beginPath();
+      ctx.strokeStyle = serie.cor;
+      ctx.lineWidth = serie.valor === T ? 2.8 : 1.6;
+
+      serie.pontos.forEach((p, i) => {
+        const x = esquerda + ((p.lambda - 200) / 800) * gw;
+        const y = topo + gh * (1 - p.intensidade);
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.stroke();
+    });
+
+    texto(ctx, "3000 K", esquerda + 8, topo + 15, "#a78bfa", 10);
+    texto(ctx, T + " K", esquerda + 75, topo + 15, "#56e5f2", 10);
+    texto(ctx, "5500 K", esquerda + 135, topo + 15, "#7cf7c4", 10);
+  }
+
+  $("temperaturaCorpo").addEventListener(
+    "input",
+    desenharGraficoCorpoNegro
+  );
+
+  // GRÁFICO DA CONTRIBUIÇÃO SOLAR
+  function desenharGraficoSolar() {
+    const canvas = $("graficoSolar");
+    if (!canvas) return;
+
+    const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
+    const esquerda = 42;
+    const direita = 14;
+    const topo = 22;
+    const baixo = 36;
+    const gw = w - esquerda - direita;
+    const gh = h - topo - baixo;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#0b142b";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(185,197,227,.13)";
+
+    for (let i = 0; i <= 4; i++) {
+      const y = topo + gh * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(esquerda, y);
+      ctx.lineTo(w - direita, y);
+      ctx.stroke();
+
+      texto(ctx, String(100 - i * 25), 7, y + 4);
+    }
+
+    for (let i = 0; i <= 4; i++) {
+      const x = esquerda + gw * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(x, topo);
+      ctx.lineTo(x, h - baixo);
+      ctx.stroke();
+
+      texto(ctx, String(i * 25), x - 7, h - 16);
+    }
+
+    texto(ctx, "Contribuição (%)", 8, 13, "#b9c5e3", 10);
+    texto(ctx, "Intensidade solar (%)", w / 2 - 63, h - 3, "#b9c5e3", 10);
+
+    const solAtual = Number($("sol").value);
+    const pontos = [];
+
+    for (let x = 0; x <= 100; x += 2) {
+      pontos.push({
+        x,
+        y: x * 0.8
+      });
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle = "#a78bfa";
+    ctx.lineWidth = 2.5;
+
+    pontos.forEach((p, i) => {
+      const x = esquerda + (p.x / 100) * gw;
+      const y = topo + (1 - p.y / 100) * gh;
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+
+    ctx.stroke();
+
+    const marcadorX = esquerda + solAtual / 100 * gw;
+    const marcadorY = topo + (1 - solAtual * 0.8 / 100) * gh;
+
+    ctx.beginPath();
+    ctx.arc(marcadorX, marcadorY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#56e5f2";
+    ctx.fill();
+
+    texto(
+      ctx,
+      `Sol atual: ${solAtual}%`,
+      Math.max(esquerda + 5, Math.min(marcadorX - 35, w - 100)),
+      Math.max(topo + 15, marcadorY - 12),
+      "#56e5f2",
+      10
+    );
+  }
+
+  // SENSORES E TOMADA DE DECISÃO
+  const sensores = ["temperaturaSensor", "luzSensor", "nivelSensor"];
+
+  function atualizarDecisao() {
+    const temperatura = Number($("temperaturaSensor").value);
+    const luz = Number($("luzSensor").value);
+    const nivel = Number($("nivelSensor").value);
+
+    $("temperaturaSensorValor").textContent = temperatura + " °C";
+    $("luzSensorValor").textContent = luz + "%";
+    $("nivelSensorValor").textContent = nivel + "%";
+
+    let titulo = "Sistema em monitoramento";
+    let decisao = "Condições dentro dos limites configurados.";
+    let status = "● Sistema ativo";
+
+    if (nivel < 20) {
+      titulo = "Nível de água baixo";
+      decisao = "O sensor detectou nível reduzido. Recomenda-se verificar o nível antes de acionar equipamentos.";
+      status = "● Atenção ao nível";
+    } else if (temperatura >= 38) {
+      titulo = "Temperatura elevada";
+      decisao = "O sistema recomenda verificar a temperatura e reduzir o aquecimento, se necessário.";
+      status = "● Atenção à temperatura";
+    } else if (luz < 20) {
+      titulo = "Pouca luminosidade";
+      decisao = "A contribuição solar pode estar reduzida. O sistema pode avaliar outras fontes de energia.";
+      status = "● Pouca luz disponível";
+    } else {
+      titulo = "Condições monitoradas";
+      decisao = "Os sensores estão enviando dados. O sistema não identificou os alertas configurados.";
+      status = "● Monitoramento ativo";
+    }
+
+    $("tituloDecisao").textContent = titulo;
+    $("decisao").textContent = decisao;
+    $("statusTexto").textContent = status;
+
+    const registro = $("logSistema");
+    const linha = document.createElement("li");
+    linha.textContent =
+      `${temperatura} °C · luz ${luz}% · água ${nivel}%`;
+
+    registro.prepend(linha);
+
+    while (registro.children.length > 4) {
+      registro.lastElementChild.remove();
+    }
+  }
+
+  sensores.forEach((id) => {
+    $(id).addEventListener("input", atualizarDecisao);
+  });
+
+  // QUIZ
+  const perguntas = [
+    {
+      pergunta: "O que determina a energia de um fóton?",
+      opcoes: [
+        "Apenas a distância percorrida pela luz",
+        "A frequência da radiação",
+        "A cor do objeto que recebe a luz",
+        "A massa do fóton"
+      ],
+      correta: 1,
+      explicacao: "A energia do fóton é dada por E = h · f: ela é proporcional à frequência."
+    },
+    {
+      pergunta: "O que acontece quando a temperatura de um corpo negro aumenta?",
+      opcoes: [
+        "Ele deixa de emitir radiação",
+        "A radiação sempre desaparece",
+        "O pico da emissão se desloca para comprimentos de onda menores",
+        "Sua temperatura diminui automaticamente"
+      ],
+      correta: 2,
+      explicacao: "Pela lei de Wien, temperaturas maiores correspondem a picos em comprimentos de onda menores."
+    },
+    {
+      pergunta: "Qual é a principal função de uma cobertura térmica na piscina?",
+      opcoes: [
+        "Aumentar a gravidade",
+        "Reduzir a perda de calor",
+        "Produzir luz visível",
+        "Transformar água em eletricidade"
+      ],
+      correta: 1,
+      explicacao: "A cobertura ajuda a reduzir perdas de calor, principalmente as associadas à evaporação."
+    },
+    {
+      pergunta: "Qual é a função de um sensor em um sistema robótico?",
+      opcoes: [
+        "Coletar informações do ambiente",
+        "Garantir energia infinita",
+        "Substituir todos os motores",
+        "Impedir qualquer falha"
+      ],
+      correta: 0,
+      explicacao: "Sensores coletam dados que podem ser interpretados pelo sistema de controle."
+    },
+    {
+      pergunta: "Qual tecnologia converte luz solar em energia elétrica?",
+      opcoes: [
+        "Cobertura térmica comum",
+        "Termômetro de mercúrio",
+        "Painel fotovoltaico",
+        "Sensor de nível"
+      ],
+      correta: 2,
+      explicacao: "Células fotovoltaicas convertem parte da energia da luz em energia elétrica."
+    }
+  ];
+
+  let indice = 0;
+  let pontos = 0;
+  let respondeu = false;
+
+  function mostrarPergunta() {
+    respondeu = false;
+
+    const atual = perguntas[indice];
+
+    $("quizContador").textContent =
+      `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+    $("quizPontos").textContent = `Pontos: ${pontos}`;
+    $("quizBarra").style.width =
+      `${(indice / perguntas.length) * 100}%`;
+
+    $("quizPergunta").textContent = atual.pergunta;
+    $("feedbackQuiz").textContent = "";
+    $("quizProximo").disabled = true;
+    $("quizProximo").textContent =
+      indice === perguntas.length - 1
+        ? "Ver resultado →"
+        : "Próxima pergunta →";
+
+    const opcoes = $("opcoesQuiz");
+    opcoes.replaceChildren();
+
+    atual.opcoes.forEach((opcao, i) => {
+      const botao = document.createElement("button");
+      botao.type = "button";
+      botao.className = "opcao";
+      botao.textContent = `${String.fromCharCode(65 + i)}. ${opcao}`;
+
+      botao.addEventListener("click", () => {
+        if (respondeu) return;
+        respondeu = true;
+
+        const botoes = opcoes.querySelectorAll("button");
+        botoes.forEach((b) => {
+          b.disabled = true;
+        });
+
+        if (i === atual.correta) {
+          pontos++;
+          botao.classList.add("certa");
+          $("feedbackQuiz").textContent = "✓ Acertou! " + atual.explicacao;
+        } else {
+          botao.classList.add("errada");
+          botoes[atual.correta].classList.add("certa");
+          $("feedbackQuiz").textContent = "Ainda não! " + atual.explicacao;
+        }
+
+        $("quizPontos").textContent = `Pontos: ${pontos}`;
+        $("quizBarra").style.width =
+          `${((indice + 1) / perguntas.length) * 100}%`;
+
+        $("quizProximo").disabled = false;
+      });
+
+      opcoes.appendChild(botao);
+    });
+  }
+
+  $("quizProximo").addEventListener("click", () => {
+    if (!respondeu) return;
+
+    indice++;
+
+    if (indice >= perguntas.length) {
+      $("quizContador").textContent = "Desafio concluído!";
+      $("quizPergunta").textContent =
+        `Você acertou ${pontos} de ${perguntas.length} perguntas!`;
+
+      $("quizBarra").style.width = "100%";
+      $("opcoesQuiz").replaceChildren();
+      $("feedbackQuiz").textContent =
+        pontos === perguntas.length
+          ? "Perfeito! Você dominou todos os desafios. ✨"
+          : "Muito bem por chegar até aqui! Revise os conceitos e tente novamente.";
+
+      $("quizProximo").textContent = "Jogar novamente ↻";
+      $("quizProximo").disabled = false;
+      respondeu = true;
+      return;
+    }
+
+    mostrarPergunta();
+  });
+
+  // O botão vira opção de reiniciar após o fim.
+  $("quizProximo").addEventListener("click", () => {
+    if (
+      indice >= perguntas.length &&
+      respondeu
+    ) {
+      indice = 0;
+      pontos = 0;
+      mostrarPergunta();
+    }
+  });
+
+  // INICIALIZAÇÃO
+  atualizarPiscina();
+  atualizarDecisao();
+  mostrarPergunta();
+
+  // Atualiza o tamanho dos gráficos ao redimensionar a janela.
+  let temporizadorRedesenho;
+
+  window.addEventListener("resize", () => {
+    clearTimeout(temporizadorRedesenho);
+
+    temporizadorRedesenho = setTimeout(() => {
+      desenharGraficoCorpoNegro();
+      desenharGraficoSolar();
+    }, 120);
+  });
+
+  desenharGraficoCorpoNegro();
+  desenharGraficoSolar();
+});
