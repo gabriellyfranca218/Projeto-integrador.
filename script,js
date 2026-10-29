@@ -1,9 +1,12 @@
+
+"use strict";
+
 /* ==========================================
-   AQUALUZ LAB — JAVASCRIPT
+   AQUALUZ LAB — INTERAÇÕES
    ========================================== */
 
 
-/* 1. MENU PARA CELULAR */
+/* 1. MENU RESPONSIVO */
 
 const menuToggle = document.getElementById("menuToggle");
 const menu = document.getElementById("menu");
@@ -37,38 +40,46 @@ let tamanhoFonte = 16;
 
 if (botaoContraste) {
   botaoContraste.addEventListener("click", () => {
-    const ativado = document.body.classList.toggle("alto-contraste");
-    botaoContraste.setAttribute("aria-pressed", String(ativado));
+    const ativo = document.body.classList.toggle("alto-contraste");
+
+    botaoContraste.setAttribute("aria-pressed", String(ativo));
+    botaoContraste.textContent = ativo
+      ? "◐ Desativar contraste"
+      : "◐ Alto contraste";
   });
 }
 
 if (botaoFonte) {
   botaoFonte.addEventListener("click", () => {
-    const ativada = document.body.classList.toggle("fonte-leitura");
-    botaoFonte.setAttribute("aria-pressed", String(ativada));
+    const ativo = document.body.classList.toggle("fonte-leitura");
+
+    botaoFonte.setAttribute("aria-pressed", String(ativo));
   });
 }
 
 function atualizarFonte() {
-  document.documentElement.style.setProperty("--fonte", `${tamanhoFonte}px`);
+  document.documentElement.style.setProperty(
+    "--fonte",
+    `${tamanhoFonte}px`
+  );
 }
 
 if (botaoAumentar) {
   botaoAumentar.addEventListener("click", () => {
-    tamanhoFonte = Math.min(tamanhoFonte + 2, 26);
+    tamanhoFonte = Math.min(26, tamanhoFonte + 2);
     atualizarFonte();
   });
 }
 
 if (botaoDiminuir) {
   botaoDiminuir.addEventListener("click", () => {
-    tamanhoFonte = Math.max(tamanhoFonte - 2, 12);
+    tamanhoFonte = Math.max(12, tamanhoFonte - 2);
     atualizarFonte();
   });
 }
 
 
-/* 3. SIMULADOR DE ONDAS ELETROMAGNÉTICAS */
+/* 3. ONDAS ELETROMAGNÉTICAS */
 
 const seletorOnda = document.getElementById("onda");
 const ondaVisual = document.getElementById("ondaVisual");
@@ -79,49 +90,101 @@ const ondaDado = document.getElementById("ondaDado");
 const ondas = {
   radio: {
     titulo: "Ondas de rádio",
-    texto: "São utilizadas em sistemas de comunicação, como transmissões de rádio e televisão.",
-    dado: "Possuem frequências relativamente baixas e comprimentos de onda grandes.",
-    escala: 12
+    texto:
+      "São utilizadas em transmissões de rádio, televisão e outros sistemas de comunicação. Têm comprimentos de onda relativamente grandes.",
+    dado:
+      "Em geral, apresentam frequências menores que as micro-ondas.",
+    escala: 120,
+    velocidade: 3
   },
+
   micro: {
     titulo: "Micro-ondas",
-    texto: "São utilizadas em comunicações, radares e fornos de micro-ondas.",
-    dado: "Ficam entre as ondas de rádio e o infravermelho no espectro eletromagnético.",
-    escala: 8
+    texto:
+      "São usadas em radares, comunicações sem fio e fornos de micro-ondas. Em determinadas condições, podem transferir energia aos materiais.",
+    dado:
+      "Ficam na região de frequências maiores que a das ondas de rádio.",
+    escala: 80,
+    velocidade: 2.5
   },
+
   infravermelho: {
     titulo: "Infravermelho",
-    texto: "Está relacionado à radiação térmica emitida pelos corpos. Sensores infravermelhos podem ajudar a medir temperaturas sem contato.",
-    dado: "É importante para estudar a transferência de energia térmica.",
-    escala: 5
+    texto:
+      "Objetos emitem radiação térmica, frequentemente na faixa do infravermelho em temperaturas cotidianas. Isso ajuda a estudar a perda de calor da piscina.",
+    dado:
+      "A radiação emitida depende da temperatura e das propriedades da superfície.",
+    escala: 50,
+    velocidade: 2
   },
+
   visivel: {
     titulo: "Luz visível",
-    texto: "É a faixa do espectro que nossos olhos conseguem enxergar. A luz solar pode aquecer a piscina e fornecer energia aos painéis solares.",
-    dado: "A luz visível inclui as cores que percebemos no arco-íris.",
-    escala: 3
+    texto:
+      "É a faixa do espectro percebida pelos nossos olhos. A luz solar pode ser absorvida por superfícies e contribuir para aquecer a água.",
+    dado:
+      "A luz visível contém diferentes cores, cada uma associada a uma faixa de comprimentos de onda.",
+    escala: 30,
+    velocidade: 1.5
   },
+
   ultravioleta: {
     titulo: "Ultravioleta",
-    texto: "Possui frequência maior que a luz visível. Parte da radiação ultravioleta solar pode afetar a pele, tornando importante a proteção contra o Sol.",
-    dado: "Seus fótons possuem mais energia que os da luz visível.",
-    escala: 2
+    texto:
+      "Tem frequência maior que a luz visível. Parte da radiação ultravioleta solar pode afetar a pele e os olhos, por isso é importante usar proteção.",
+    dado:
+      "Seus fótons possuem mais energia que os da luz visível.",
+    escala: 20,
+    velocidade: 1.2
+  },
+
+  raiosx: {
+    titulo: "Raios X",
+    texto:
+      "São radiações de alta frequência usadas em exames de imagem. Exigem cuidados de proteção devido à sua capacidade de ionizar matéria.",
+    dado:
+      "Têm comprimentos de onda muito menores que os da luz visível.",
+    escala: 12,
+    velocidade: 1
+  },
+
+  gama: {
+    titulo: "Raios gama",
+    texto:
+      "São radiações de frequência muito alta, produzidas em processos nucleares e outros fenômenos energéticos.",
+    dado:
+      "Estão entre as regiões de maior energia por fóton do espectro eletromagnético.",
+    escala: 7,
+    velocidade: 0.8
   }
 };
 
 function atualizarOnda() {
   if (!seletorOnda) return;
 
-  const tipo = ondas[seletorOnda.value];
-  if (!tipo) return;
+  const onda = ondas[seletorOnda.value];
+  if (!onda) return;
 
-  if (ondaTitulo) ondaTitulo.textContent = tipo.titulo;
-  if (ondaTexto) ondaTexto.textContent = tipo.texto;
-  if (ondaDado) ondaDado.textContent = tipo.dado;
+  if (ondaTitulo) ondaTitulo.textContent = onda.titulo;
+  if (ondaTexto) ondaTexto.textContent = onda.texto;
+  if (ondaDado) ondaDado.textContent = onda.dado;
 
   if (ondaVisual) {
-    ondaVisual.style.backgroundSize = `${tipo.escala * 10}px 100px`;
-    ondaVisual.style.animationDuration = `${tipo.escala / 2}s`;
+    ondaVisual.style.backgroundSize =
+      `${onda.escala}px 100px`;
+
+    ondaVisual.style.animationDuration =
+      `${onda.velocidade}s`;
+
+    ondaVisual.style.filter =
+      seletorOnda.value === "visivel"
+        ? "hue-rotate(35deg)"
+        : seletorOnda.value === "ultravioleta"
+          ? "hue-rotate(75deg)"
+          : seletorOnda.value === "raiosx" ||
+            seletorOnda.value === "gama"
+            ? "hue-rotate(130deg)"
+            : "none";
   }
 }
 
@@ -131,7 +194,7 @@ if (seletorOnda) {
 }
 
 
-/* 4. SIMULADOR DE AQUECIMENTO DA PISCINA */
+/* 4. SIMULADOR TÉRMICO DA PISCINA */
 
 const sol = document.getElementById("sol");
 const solValor = document.getElementById("solValor");
@@ -143,27 +206,36 @@ const temperatura = document.getElementById("temperatura");
 const barraCalor = document.getElementById("barraCalor");
 const resultadoCalor = document.getElementById("resultadoCalor");
 
+const barraEntrada = document.getElementById("barraEntrada");
+const barraRetida = document.getElementById("barraRetida");
+const barraPerda = document.getElementById("barraPerda");
+
 function calcularTemperatura() {
   if (!sol || !absorcao || !capa) return;
 
   const intensidade = Number(sol.value);
   const absorcaoSolar = Number(absorcao.value);
-  const temCapa = capa.checked;
+  const temCapa = capa.value === "com";
 
+  // Atualiza as porcentagens imediatamente.
   if (solValor) solValor.textContent = `${intensidade}%`;
   if (absValor) absValor.textContent = `${absorcaoSolar}%`;
 
-  /*
-    Modelo didático simplificado.
-    Não prevê a temperatura real de uma piscina.
-  */
+  // Índice didático, não é temperatura real em °C.
+  const energiaRecebida = intensidade * absorcaoSolar / 100;
+  const fatorRetencao = temCapa ? 1.15 : 1;
+  const indice = Math.min(
+    100,
+    Math.round(energiaRecebida * fatorRetencao)
+  );
 
-  const aquecimento = intensidade * (absorcaoSolar / 100);
-  const retencao = temCapa ? 1.25 : 1;
-  const indice = Math.min(100, Math.round(aquecimento * retencao));
+  const perdasIlustrativas = Math.max(
+    0,
+    Math.min(100, 100 - indice)
+  );
 
   if (temperatura) {
-    temperatura.textContent = `${indice}%`;
+    temperatura.textContent = indice;
   }
 
   if (barraCalor) {
@@ -171,61 +243,115 @@ function calcularTemperatura() {
     barraCalor.setAttribute("aria-valuenow", String(indice));
   }
 
+  if (barraEntrada) {
+    barraEntrada.style.height = `${intensidade}%`;
+  }
+
+  if (barraRetida) {
+    barraRetida.style.height = `${indice}%`;
+  }
+
+  if (barraPerda) {
+    barraPerda.style.height = `${perdasIlustrativas}%`;
+  }
+
   if (resultadoCalor) {
     let mensagem;
 
-    if (intensidade < 25) {
-      mensagem = "Com pouca luz solar, a energia disponível para aquecer a piscina é menor.";
-    } else if (absorcaoSolar < 40) {
-      mensagem = "Uma superfície que absorve menos energia recebe menos energia solar para aquecimento.";
+    if (intensidade === 0 || absorcaoSolar === 0) {
+      mensagem =
+        "Neste modelo, não há contribuição de energia solar absorvida para o aquecimento.";
+    } else if (intensidade < 25) {
+      mensagem =
+        "A intensidade solar está baixa. A energia disponível para aquecer a água é menor.";
     } else if (temCapa) {
-      mensagem = "Neste modelo ilustrativo, a cobertura representa uma maior retenção de calor.";
+      mensagem =
+        "A cobertura representa uma redução das perdas térmicas. O efeito real depende do tipo de capa e das condições ambientais.";
+    } else if (absorcaoSolar < 40) {
+      mensagem =
+        "O coletor absorve uma parcela menor da energia incidente. Materiais e superfícies diferentes absorvem energia de maneiras distintas.";
     } else {
-      mensagem = "A energia solar absorvida pode aquecer a água, mas parte do calor também é perdida para o ambiente.";
+      mensagem =
+        "A energia solar absorvida contribui para o aquecimento, mas a piscina também troca calor com o ambiente.";
     }
 
     resultadoCalor.textContent = mensagem;
   }
 }
 
-if (calcular) {
-  calcular.addEventListener("click", calcularTemperatura);
-}
 if (sol) sol.addEventListener("input", calcularTemperatura);
 if (absorcao) absorcao.addEventListener("input", calcularTemperatura);
 if (capa) capa.addEventListener("change", calcularTemperatura);
 
+if (calcular) {
+  calcular.addEventListener("click", calcularTemperatura);
+}
+
 calcularTemperatura();
 
 
-/* 5. EFEITO FOTOELÉTRICO E ENERGIA SOLAR */
+/* 5. EFEITO FOTOELÉTRICO */
 
 const luz = document.getElementById("luz");
 const luzValor = document.getElementById("luzValor");
 const fotons = document.getElementById("fotons");
+const fotonsValor = document.getElementById("fotonsValor");
 const geracao = document.getElementById("geracao");
 const explicacaoPV = document.getElementById("explicacaoPV");
+const estadoFoton = document.getElementById("estadoFoton");
+const intensidadeVisual = document.getElementById("intensidadeVisual");
+const barraLuz = document.getElementById("barraLuz");
 
 function atualizarEnergiaSolar() {
   if (!luz || !fotons) return;
 
   const intensidade = Number(luz.value);
-  const frequencia = Number(fotons.value);
+  const energiaFoton = Number(fotons.value);
 
   if (luzValor) luzValor.textContent = `${intensidade}%`;
 
+  if (fotonsValor) {
+    fotonsValor.textContent =
+      `${energiaFoton.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      })} eV`;
+  }
+
+  if (intensidadeVisual) {
+    intensidadeVisual.textContent = `${intensidade}%`;
+  }
+
+  if (barraLuz) {
+    barraLuz.style.width = `${intensidade}%`;
+  }
+
+  // Limiar de 2,5 eV usado somente como exemplo didático.
+  const limiarIlustrativo = 2.5;
+  const ocorreEmissao = energiaFoton >= limiarIlustrativo;
+
+  if (estadoFoton) {
+    estadoFoton.textContent = ocorreEmissao
+      ? "Energia suficiente no exemplo"
+      : "Energia abaixo do limiar";
+  }
+
   if (geracao) {
     geracao.textContent =
-      `Intensidade da luz: ${intensidade}% | Energia relativa por fóton: ${frequencia}`;
+      `Intensidade da luz: ${intensidade}% · ` +
+      `Energia por fóton: ${energiaFoton.toLocaleString("pt-BR")} eV`;
   }
 
   if (explicacaoPV) {
-    if (frequencia < 3) {
+    if (!ocorreEmissao) {
       explicacaoPV.textContent =
-        "No efeito fotoelétrico, se a energia de cada fóton ficar abaixo do mínimo necessário para o material, não haverá emissão de elétrons, mesmo aumentando a intensidade da luz.";
+        "Neste exemplo, a energia de cada fóton está abaixo do limiar ilustrativo. Aumentar a intensidade aumenta a quantidade de fótons, mas não a energia individual de cada um.";
+    } else if (intensidade === 0) {
+      explicacaoPV.textContent =
+        "Sem luz incidente, não há fótons chegando ao material, mesmo que a energia por fóton selecionada seja suficiente.";
     } else {
       explicacaoPV.textContent =
-        "Fótons mais energéticos podem fornecer mais energia aos elétrons. A intensidade está relacionada à quantidade de fótons incidentes. Painéis fotovoltaicos transformam luz em energia elétrica por um mecanismo relacionado, mas diferente do efeito fotoelétrico externo.";
+        "Neste exemplo, os fótons têm energia suficiente para superar o limiar ilustrativo. A intensidade altera a quantidade de luz incidente; a frequência está relacionada à energia de cada fóton.";
     }
   }
 }
@@ -236,15 +362,28 @@ if (fotons) fotons.addEventListener("input", atualizarEnergiaSolar);
 atualizarEnergiaSolar();
 
 
-/* 6. SENSORES DA PISCINA E ROBÓTICA */
+/* 6. SENSORES VIRTUAIS E ROBÓTICA */
 
-const temperaturaSensor = document.getElementById("temperaturaSensor");
-const tempSensorValor = document.getElementById("tempSensorValor");
-const luzSensor = document.getElementById("luzSensor");
-const luzSensorValor = document.getElementById("luzSensorValor");
-const nivelSensor = document.getElementById("nivelSensor");
-const nivelSensorValor = document.getElementById("nivelSensorValor");
-const decisao = document.getElementById("decisao");
+const temperaturaSensor =
+  document.getElementById("temperaturaSensor");
+
+const tempSensorValor =
+  document.getElementById("tempSensorValor");
+
+const luzSensor =
+  document.getElementById("luzSensor");
+
+const luzSensorValor =
+  document.getElementById("luzSensorValor");
+
+const nivelSensor =
+  document.getElementById("nivelSensor");
+
+const nivelSensorValor =
+  document.getElementById("nivelSensorValor");
+
+const decisao =
+  document.getElementById("decisao");
 
 function atualizarSensores() {
   if (!temperaturaSensor || !luzSensor || !nivelSensor) return;
@@ -253,35 +392,58 @@ function atualizarSensores() {
   const iluminacao = Number(luzSensor.value);
   const nivel = Number(nivelSensor.value);
 
-  if (tempSensorValor) tempSensorValor.textContent = `${temp} °C`;
-  if (luzSensorValor) luzSensorValor.textContent = `${iluminacao}%`;
-  if (nivelSensorValor) nivelSensorValor.textContent = `${nivel}%`;
-
-  if (decisao) {
-    let mensagem;
-
-    if (nivel < 25) {
-      mensagem = "Atenção: o nível simulado da água está baixo. O sistema recomenda verificar a piscina.";
-    } else if (temp < 20) {
-      mensagem = "A água está fria no cenário simulado. O sistema pode priorizar o aquecimento, se houver equipamento adequado.";
-    } else if (iluminacao < 30) {
-      mensagem = "A iluminação está baixa. A geração solar pode ser reduzida neste cenário.";
-    } else {
-      mensagem = "Parâmetros dentro das faixas demonstrativas. O sistema pode continuar monitorando os sensores.";
-    }
-
-    decisao.textContent = mensagem;
+  if (tempSensorValor) {
+    tempSensorValor.textContent = `${temp} °C`;
   }
+
+  if (luzSensorValor) {
+    luzSensorValor.textContent = `${iluminacao}%`;
+  }
+
+  if (nivelSensorValor) {
+    nivelSensorValor.textContent = `${nivel}%`;
+  }
+
+  if (!decisao) return;
+
+  let mensagem;
+
+  if (nivel < 25) {
+    mensagem =
+      "⚠ Nível baixo: o controlador recomenda verificar a água antes de operar equipamentos.";
+  } else if (temp < 20) {
+    mensagem =
+      "❄ Água abaixo de 20 °C: o sistema sugere avaliar a necessidade de aquecimento.";
+  } else if (temp > 32) {
+    mensagem =
+      "♨ Água acima de 32 °C: o sistema recomenda conferir a temperatura desejada e as condições de segurança.";
+  } else if (iluminacao < 30) {
+    mensagem =
+      "☾ Pouca luminosidade: a contribuição solar pode estar reduzida neste cenário.";
+  } else {
+    mensagem =
+      "✓ Leituras dentro das faixas demonstrativas: o controlador continua monitorando os sensores.";
+  }
+
+  decisao.textContent = mensagem;
 }
 
-if (temperaturaSensor) temperaturaSensor.addEventListener("input", atualizarSensores);
-if (luzSensor) luzSensor.addEventListener("input", atualizarSensores);
-if (nivelSensor) nivelSensor.addEventListener("input", atualizarSensores);
+if (temperaturaSensor) {
+  temperaturaSensor.addEventListener("input", atualizarSensores);
+}
+
+if (luzSensor) {
+  luzSensor.addEventListener("input", atualizarSensores);
+}
+
+if (nivelSensor) {
+  nivelSensor.addEventListener("input", atualizarSensores);
+}
 
 atualizarSensores();
 
 
-/* 7. ANO AUTOMÁTICO NO RODAPÉ */
+/* 7. ANO AUTOMÁTICO */
 
 const anoAtual = document.getElementById("anoAtual");
 
@@ -290,12 +452,12 @@ if (anoAtual) {
 }
 
 
-/* 8. RESPEITAR PREFERÊNCIA POR MENOS ANIMAÇÕES */
+/* 8. RESPEITAR MENOS MOVIMENTO */
 
 const movimentoReduzido = window.matchMedia(
   "(prefers-reduced-motion: reduce)"
 );
 
-if (movimentoReduzido.matches) {
-  document.documentElement.style.scrollBehavior = "auto";
+if (movimentoReduzido.matches && ondaVisual) {
+  ondaVisual.style.animation = "none";
 }
