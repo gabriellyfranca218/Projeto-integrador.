@@ -1,463 +1,762 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
-"use strict";
-
-/* ==========================================
-   AQUALUZ LAB — INTERAÇÕES
-   ========================================== */
-
-
-/* 1. MENU RESPONSIVO */
-
-const menuToggle = document.getElementById("menuToggle");
-const menu = document.getElementById("menu");
-
-if (menuToggle && menu) {
-  menuToggle.addEventListener("click", () => {
-    const aberto = menu.classList.toggle("aberto");
-
-    menuToggle.setAttribute("aria-expanded", String(aberto));
-    menuToggle.textContent = aberto ? "Fechar menu ✕" : "☰ Menu";
-  });
-
-  menu.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      menu.classList.remove("aberto");
-      menuToggle.setAttribute("aria-expanded", "false");
-      menuToggle.textContent = "☰ Menu";
-    });
-  });
+:root {
+  --fundo: #0a0e22;
+  --painel: #111831;
+  --texto: #f4f6ff;
+  --suave: #aab4d1;
+  --roxo: #a58bff;
+  --ciano: #5be4ef;
+  --azul: #6ea8ff;
+  --borda: rgba(173,190,255,.16);
 }
 
+* { box-sizing: border-box; }
 
-/* 2. ACESSIBILIDADE */
-
-const botaoContraste = document.getElementById("contraste");
-const botaoFonte = document.getElementById("fonte");
-const botaoAumentar = document.getElementById("aumentar");
-const botaoDiminuir = document.getElementById("diminuir");
-
-let tamanhoFonte = 16;
-
-if (botaoContraste) {
-  botaoContraste.addEventListener("click", () => {
-    const ativo = document.body.classList.toggle("alto-contraste");
-
-    botaoContraste.setAttribute("aria-pressed", String(ativo));
-    botaoContraste.textContent = ativo
-      ? "◐ Desativar contraste"
-      : "◐ Alto contraste";
-  });
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 85px;
 }
 
-if (botaoFonte) {
-  botaoFonte.addEventListener("click", () => {
-    const ativo = document.body.classList.toggle("fonte-leitura");
-
-    botaoFonte.setAttribute("aria-pressed", String(ativo));
-  });
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 80% 5%, rgba(70,57,154,.2), transparent 35%),
+    var(--fundo);
+  color: var(--texto);
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.6;
 }
 
-function atualizarFonte() {
-  document.documentElement.style.setProperty(
-    "--fonte",
-    `${tamanhoFonte}px`
-  );
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+button, a, input { -webkit-tap-highlight-color: transparent; }
+
+button:focus-visible, a:focus-visible, input:focus-visible {
+  outline: 3px solid var(--ciano);
+  outline-offset: 4px;
 }
 
-if (botaoAumentar) {
-  botaoAumentar.addEventListener("click", () => {
-    tamanhoFonte = Math.min(26, tamanhoFonte + 2);
-    atualizarFonte();
-  });
+.pular-conteudo {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 1000;
+  background: white;
+  color: #111;
+  padding: 10px;
 }
 
-if (botaoDiminuir) {
-  botaoDiminuir.addEventListener("click", () => {
-    tamanhoFonte = Math.max(12, tamanhoFonte - 2);
-    atualizarFonte();
-  });
+.pular-conteudo:focus { left: 10px; }
+
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -.04em;
+  line-height: 1.2;
 }
 
+h2 { font-size: clamp(1.9rem, 4vw, 2.7rem); }
+p { margin-top: 0; }
 
-/* 3. ONDAS ELETROMAGNÉTICAS */
-
-const seletorOnda = document.getElementById("onda");
-const ondaVisual = document.getElementById("ondaVisual");
-const ondaTitulo = document.getElementById("ondaTitulo");
-const ondaTexto = document.getElementById("ondaTexto");
-const ondaDado = document.getElementById("ondaDado");
-
-const ondas = {
-  radio: {
-    titulo: "Ondas de rádio",
-    texto:
-      "São utilizadas em transmissões de rádio, televisão e outros sistemas de comunicação. Têm comprimentos de onda relativamente grandes.",
-    dado:
-      "Em geral, apresentam frequências menores que as micro-ondas.",
-    escala: 120,
-    velocidade: 3
-  },
-
-  micro: {
-    titulo: "Micro-ondas",
-    texto:
-      "São usadas em radares, comunicações sem fio e fornos de micro-ondas. Em determinadas condições, podem transferir energia aos materiais.",
-    dado:
-      "Ficam na região de frequências maiores que a das ondas de rádio.",
-    escala: 80,
-    velocidade: 2.5
-  },
-
-  infravermelho: {
-    titulo: "Infravermelho",
-    texto:
-      "Objetos emitem radiação térmica, frequentemente na faixa do infravermelho em temperaturas cotidianas. Isso ajuda a estudar a perda de calor da piscina.",
-    dado:
-      "A radiação emitida depende da temperatura e das propriedades da superfície.",
-    escala: 50,
-    velocidade: 2
-  },
-
-  visivel: {
-    titulo: "Luz visível",
-    texto:
-      "É a faixa do espectro percebida pelos nossos olhos. A luz solar pode ser absorvida por superfícies e contribuir para aquecer a água.",
-    dado:
-      "A luz visível contém diferentes cores, cada uma associada a uma faixa de comprimentos de onda.",
-    escala: 30,
-    velocidade: 1.5
-  },
-
-  ultravioleta: {
-    titulo: "Ultravioleta",
-    texto:
-      "Tem frequência maior que a luz visível. Parte da radiação ultravioleta solar pode afetar a pele e os olhos, por isso é importante usar proteção.",
-    dado:
-      "Seus fótons possuem mais energia que os da luz visível.",
-    escala: 20,
-    velocidade: 1.2
-  },
-
-  raiosx: {
-    titulo: "Raios X",
-    texto:
-      "São radiações de alta frequência usadas em exames de imagem. Exigem cuidados de proteção devido à sua capacidade de ionizar matéria.",
-    dado:
-      "Têm comprimentos de onda muito menores que os da luz visível.",
-    escala: 12,
-    velocidade: 1
-  },
-
-  gama: {
-    titulo: "Raios gama",
-    texto:
-      "São radiações de frequência muito alta, produzidas em processos nucleares e outros fenômenos energéticos.",
-    dado:
-      "Estão entre as regiões de maior energia por fóton do espectro eletromagnético.",
-    escala: 7,
-    velocidade: 0.8
-  }
-};
-
-function atualizarOnda() {
-  if (!seletorOnda) return;
-
-  const onda = ondas[seletorOnda.value];
-  if (!onda) return;
-
-  if (ondaTitulo) ondaTitulo.textContent = onda.titulo;
-  if (ondaTexto) ondaTexto.textContent = onda.texto;
-  if (ondaDado) ondaDado.textContent = onda.dado;
-
-  if (ondaVisual) {
-    ondaVisual.style.backgroundSize =
-      `${onda.escala}px 100px`;
-
-    ondaVisual.style.animationDuration =
-      `${onda.velocidade}s`;
-
-    ondaVisual.style.filter =
-      seletorOnda.value === "visivel"
-        ? "hue-rotate(35deg)"
-        : seletorOnda.value === "ultravioleta"
-          ? "hue-rotate(75deg)"
-          : seletorOnda.value === "raiosx" ||
-            seletorOnda.value === "gama"
-            ? "hue-rotate(130deg)"
-            : "none";
-  }
+.topo {
+  min-height: 76px;
+  max-width: 1200px;
+  margin: auto;
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  z-index: 10;
 }
 
-if (seletorOnda) {
-  seletorOnda.addEventListener("change", atualizarOnda);
-  atualizarOnda();
+.marca {
+  font: 700 1.15rem 'Space Grotesk', sans-serif;
+  white-space: nowrap;
 }
 
+.marca strong { color: var(--ciano); }
 
-/* 4. SIMULADOR TÉRMICO DA PISCINA */
-
-const sol = document.getElementById("sol");
-const solValor = document.getElementById("solValor");
-const absorcao = document.getElementById("absorcao");
-const absValor = document.getElementById("absValor");
-const capa = document.getElementById("capa");
-const calcular = document.getElementById("calcular");
-const temperatura = document.getElementById("temperatura");
-const barraCalor = document.getElementById("barraCalor");
-const resultadoCalor = document.getElementById("resultadoCalor");
-
-const barraEntrada = document.getElementById("barraEntrada");
-const barraRetida = document.getElementById("barraRetida");
-const barraPerda = document.getElementById("barraPerda");
-
-function calcularTemperatura() {
-  if (!sol || !absorcao || !capa) return;
-
-  const intensidade = Number(sol.value);
-  const absorcaoSolar = Number(absorcao.value);
-  const temCapa = capa.value === "com";
-
-  // Atualiza as porcentagens imediatamente.
-  if (solValor) solValor.textContent = `${intensidade}%`;
-  if (absValor) absValor.textContent = `${absorcaoSolar}%`;
-
-  // Índice didático, não é temperatura real em °C.
-  const energiaRecebida = intensidade * absorcaoSolar / 100;
-  const fatorRetencao = temCapa ? 1.15 : 1;
-  const indice = Math.min(
-    100,
-    Math.round(energiaRecebida * fatorRetencao)
-  );
-
-  const perdasIlustrativas = Math.max(
-    0,
-    Math.min(100, 100 - indice)
-  );
-
-  if (temperatura) {
-    temperatura.textContent = indice;
-  }
-
-  if (barraCalor) {
-    barraCalor.style.width = `${indice}%`;
-    barraCalor.setAttribute("aria-valuenow", String(indice));
-  }
-
-  if (barraEntrada) {
-    barraEntrada.style.height = `${intensidade}%`;
-  }
-
-  if (barraRetida) {
-    barraRetida.style.height = `${indice}%`;
-  }
-
-  if (barraPerda) {
-    barraPerda.style.height = `${perdasIlustrativas}%`;
-  }
-
-  if (resultadoCalor) {
-    let mensagem;
-
-    if (intensidade === 0 || absorcaoSolar === 0) {
-      mensagem =
-        "Neste modelo, não há contribuição de energia solar absorvida para o aquecimento.";
-    } else if (intensidade < 25) {
-      mensagem =
-        "A intensidade solar está baixa. A energia disponível para aquecer a água é menor.";
-    } else if (temCapa) {
-      mensagem =
-        "A cobertura representa uma redução das perdas térmicas. O efeito real depende do tipo de capa e das condições ambientais.";
-    } else if (absorcaoSolar < 40) {
-      mensagem =
-        "O coletor absorve uma parcela menor da energia incidente. Materiais e superfícies diferentes absorvem energia de maneiras distintas.";
-    } else {
-      mensagem =
-        "A energia solar absorvida contribui para o aquecimento, mas a piscina também troca calor com o ambiente.";
-    }
-
-    resultadoCalor.textContent = mensagem;
-  }
+.menu {
+  display: flex;
+  gap: clamp(14px, 3vw, 32px);
+  color: var(--suave);
+  font-size: .88rem;
 }
 
-if (sol) sol.addEventListener("input", calcularTemperatura);
-if (absorcao) absorcao.addEventListener("input", calcularTemperatura);
-if (capa) capa.addEventListener("change", calcularTemperatura);
+.menu a:hover, .rodape a:hover { color: var(--ciano); }
 
-if (calcular) {
-  calcular.addEventListener("click", calcularTemperatura);
+.menu-botao {
+  display: none;
+  color: var(--texto);
+  background: transparent;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 8px 12px;
 }
 
-calcularTemperatura();
-
-
-/* 5. EFEITO FOTOELÉTRICO */
-
-const luz = document.getElementById("luz");
-const luzValor = document.getElementById("luzValor");
-const fotons = document.getElementById("fotons");
-const fotonsValor = document.getElementById("fotonsValor");
-const geracao = document.getElementById("geracao");
-const explicacaoPV = document.getElementById("explicacaoPV");
-const estadoFoton = document.getElementById("estadoFoton");
-const intensidadeVisual = document.getElementById("intensidadeVisual");
-const barraLuz = document.getElementById("barraLuz");
-
-function atualizarEnergiaSolar() {
-  if (!luz || !fotons) return;
-
-  const intensidade = Number(luz.value);
-  const energiaFoton = Number(fotons.value);
-
-  if (luzValor) luzValor.textContent = `${intensidade}%`;
-
-  if (fotonsValor) {
-    fotonsValor.textContent =
-      `${energiaFoton.toLocaleString("pt-BR", {
-        minimumFractionDigits: 1,
-        maximumFractionDigits: 1
-      })} eV`;
-  }
-
-  if (intensidadeVisual) {
-    intensidadeVisual.textContent = `${intensidade}%`;
-  }
-
-  if (barraLuz) {
-    barraLuz.style.width = `${intensidade}%`;
-  }
-
-  // Limiar de 2,5 eV usado somente como exemplo didático.
-  const limiarIlustrativo = 2.5;
-  const ocorreEmissao = energiaFoton >= limiarIlustrativo;
-
-  if (estadoFoton) {
-    estadoFoton.textContent = ocorreEmissao
-      ? "Energia suficiente no exemplo"
-      : "Energia abaixo do limiar";
-  }
-
-  if (geracao) {
-    geracao.textContent =
-      `Intensidade da luz: ${intensidade}% · ` +
-      `Energia por fóton: ${energiaFoton.toLocaleString("pt-BR")} eV`;
-  }
-
-  if (explicacaoPV) {
-    if (!ocorreEmissao) {
-      explicacaoPV.textContent =
-        "Neste exemplo, a energia de cada fóton está abaixo do limiar ilustrativo. Aumentar a intensidade aumenta a quantidade de fótons, mas não a energia individual de cada um.";
-    } else if (intensidade === 0) {
-      explicacaoPV.textContent =
-        "Sem luz incidente, não há fótons chegando ao material, mesmo que a energia por fóton selecionada seja suficiente.";
-    } else {
-      explicacaoPV.textContent =
-        "Neste exemplo, os fótons têm energia suficiente para superar o limiar ilustrativo. A intensidade altera a quantidade de luz incidente; a frequência está relacionada à energia de cada fóton.";
-    }
-  }
+.hero {
+  max-width: 1200px;
+  min-height: 490px;
+  margin: auto;
+  padding: 60px 28px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 30px;
 }
 
-if (luz) luz.addEventListener("input", atualizarEnergiaSolar);
-if (fotons) fotons.addEventListener("input", atualizarEnergiaSolar);
+.etiqueta, .sobretitulo {
+  color: var(--ciano);
+  font-size: .69rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+}
 
-atualizarEnergiaSolar();
+.etiqueta {
+  display: inline-block;
+  border: 1px solid rgba(91,228,239,.25);
+  border-radius: 30px;
+  padding: 8px 12px;
+  background: rgba(91,228,239,.06);
+}
 
+.hero h1 {
+  font-size: clamp(2.7rem, 5.5vw, 4.4rem);
+  margin: 22px 0;
+}
 
-/* 6. SENSORES VIRTUAIS E ROBÓTICA */
+.hero h1 span { color: var(--roxo); }
 
-const temperaturaSensor =
-  document.getElementById("temperaturaSensor");
+.hero-texto > p, .cabecalho > p {
+  color: var(--suave);
+  line-height: 1.8;
+}
 
-const tempSensorValor =
-  document.getElementById("tempSensorValor");
+.hero-texto > p { max-width: 520px; }
 
-const luzSensor =
-  document.getElementById("luzSensor");
+.hero-acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 28px 0;
+}
 
-const luzSensorValor =
-  document.getElementById("luzSensorValor");
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 12px;
+  padding: 12px 17px;
+  font-weight: 700;
+  font-size: .85rem;
+  cursor: pointer;
+  transition: transform .2s, filter .2s;
+}
 
-const nivelSensor =
-  document.getElementById("nivelSensor");
+.botao:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
 
-const nivelSensorValor =
-  document.getElementById("nivelSensorValor");
+.primario {
+  color: #10142d;
+  background: linear-gradient(110deg, var(--ciano), #a3f4e7);
+}
 
-const decisao =
-  document.getElementById("decisao");
+.secundario {
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  background: rgba(255,255,255,.025);
+}
 
-function atualizarSensores() {
-  if (!temperaturaSensor || !luzSensor || !nivelSensor) return;
+.hero-notas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  color: var(--suave);
+  font-size: .75rem;
+}
 
-  const temp = Number(temperaturaSensor.value);
-  const iluminacao = Number(luzSensor.value);
-  const nivel = Number(nivelSensor.value);
+.hero-notas b {
+  color: var(--texto);
+  font: 700 1.1rem 'Space Grotesk', sans-serif;
+}
 
-  if (tempSensorValor) {
-    tempSensorValor.textContent = `${temp} °C`;
+.hero-arte {
+  min-height: 340px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.hero-arte::before {
+  content: '';
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  background: radial-gradient(circle, rgba(105,89,255,.23), transparent 67%);
+  z-index: -2;
+}
+
+.orb {
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 25%, #d7ffff, #61dbe9 30%, #6253cf 70%, #292052);
+  box-shadow: 0 0 80px rgba(111,107,255,.4);
+}
+
+.anel {
+  position: absolute;
+  width: 300px;
+  height: 125px;
+  border: 1px solid rgba(130,156,255,.35);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+
+.anel2 {
+  width: 340px;
+  height: 160px;
+  transform: rotate(35deg);
+  border-color: rgba(91,228,239,.3);
+}
+
+.anel3 {
+  width: 230px;
+  height: 290px;
+  transform: rotate(60deg);
+  border-style: dashed;
+}
+
+.cartao-flutuante {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid var(--borda);
+  border-radius: 14px;
+  background: rgba(15,22,49,.92);
+  box-shadow: 0 15px 45px rgba(0,0,0,.2);
+  font-size: .85rem;
+}
+
+.cartao-flutuante small {
+  display: block;
+  color: var(--suave);
+  font-size: .65rem;
+}
+
+.luz { top: 12%; left: 0; }
+.agua { right: 0; bottom: 10%; }
+
+.faixa {
+  max-width: 1144px;
+  margin: 0 auto 35px;
+  padding: 22px 28px;
+  border-block: 1px solid var(--borda);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.faixa > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.faixa b {
+  color: var(--roxo);
+  font: 700 1.5rem 'Space Grotesk', sans-serif;
+}
+
+.faixa span { font-size: .86rem; }
+.faixa small { display: block; color: var(--suave); font-size: .72rem; }
+
+.secao {
+  max-width: 1200px;
+  margin: auto;
+  padding: 65px 28px;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 30px;
+}
+
+.cabecalho h2 { margin: 10px 0 0; }
+
+.cabecalho > p {
+  max-width: 430px;
+  font-size: .88rem;
+  margin-bottom: 0;
+}
+
+.cartoes, .graficos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 17px;
+}
+
+.card-ciencia, .painel {
+  border: 1px solid var(--borda);
+  border-radius: 22px;
+  background: linear-gradient(145deg, rgba(22,31,64,.95), rgba(13,19,43,.95));
+}
+
+.card-ciencia { padding: 24px; }
+
+.icone {
+  width: 45px;
+  height: 45px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  font-size: 1.5rem;
+  margin-bottom: 22px;
+}
+
+.violeta { color: var(--roxo); background: rgba(165,139,255,.15); }
+.azul { color: var(--azul); background: rgba(110,168,255,.14); }
+.ciano { color: var(--ciano); background: rgba(91,228,239,.12); }
+
+.numero-card {
+  display: block;
+  color: var(--suave);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .12em;
+}
+
+.card-ciencia h3 { font-size: 1.2rem; margin: 10px 0; }
+.card-ciencia p { color: var(--suave); font-size: .82rem; line-height: 1.8; }
+
+.mini-grafico {
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  height: 35px;
+  margin: 22px 0 12px;
+}
+
+.mini-grafico i {
+  flex: 1;
+  border-radius: 5px 5px 0 0;
+  background: linear-gradient(var(--roxo), rgba(128,92,255,.12));
+}
+
+.mini-grafico i:nth-child(1) { height: 15%; }
+.mini-grafico i:nth-child(2) { height: 25%; }
+.mini-grafico i:nth-child(3) { height: 40%; }
+.mini-grafico i:nth-child(4) { height: 70%; }
+.mini-grafico i:nth-child(5) { height: 95%; }
+.mini-grafico i:nth-child(6) { height: 50%; }
+.mini-grafico i:nth-child(7) { height: 20%; }
+
+.destaque {
+  border-top: 1px solid var(--borda);
+  padding-top: 12px;
+  color: var(--texto) !important;
+  font-size: .75rem !important;
+}
+
+.fluxo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  margin: 22px 0;
+  color: var(--roxo);
+  font-size: .75rem;
+}
+
+.fluxo span {
+  padding: 7px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  color: var(--texto);
+}
+
+.simulador-secao {
+  max-width: none;
+  background: linear-gradient(180deg, rgba(80,65,160,.08), transparent);
+}
+
+.simulador-secao > .cabecalho,
+.simulador-grid,
+#graficos > .cabecalho,
+.graficos-grid,
+#sensores > .cabecalho,
+.sensores-grid {
+  max-width: 1144px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.simulador-grid, .sensores-grid {
+  display: grid;
+  grid-template-columns: .85fr 1.15fr;
+  gap: 18px;
+}
+
+.painel { padding: 24px; min-width: 0; }
+.painel h3 { margin-top: 5px; }
+.subtexto { color: var(--suave); font-size: .85rem; }
+
+.controle { margin: 25px 0; }
+
+.controle label {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: .83rem;
+  font-weight: 600;
+  margin-bottom: 13px;
+}
+
+.controle output {
+  color: var(--ciano);
+  font-family: 'Space Grotesk', sans-serif;
+  white-space: nowrap;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--ciano);
+  cursor: pointer;
+}
+
+.limites {
+  display: flex;
+  justify-content: space-between;
+  color: #8793b5;
+  font-size: .68rem;
+  margin-top: 7px;
+}
+
+.aviso {
+  border-top: 1px solid var(--borda);
+  padding-top: 15px;
+  color: var(--suave);
+  font-size: .72rem;
+}
+
+.piscina {
+  height: 210px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(91,228,239,.18);
+  border-radius: 16px;
+  margin: 18px 0 23px;
+  background: linear-gradient(180deg, #1b2451, #111d45 55%, #132d56);
+}
+
+.sol-visual {
+  position: absolute;
+  right: 18%;
+  top: 12px;
+  color: #ffe7a2;
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 18px rgba(255,224,134,.55));
+  transition: opacity .2s;
+}
+
+.agua-piscina {
+  position: absolute;
+  left: -5%;
+  right: -5%;
+  bottom: -30px;
+  height: 130px;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, #48d9e5, #2479bd 60%, #183d83);
+  box-shadow: inset 0 10px 25px rgba(163,255,255,.25);
+}
+
+.onda {
+  position: absolute;
+  top: 10px;
+  left: -5%;
+  width: 110%;
+  height: 40px;
+  border-top: 2px solid rgba(210,255,255,.5);
+  border-radius: 50%;
+  transform: rotate(-3deg);
+}
+
+.onda2 { top: 25px; transform: rotate(3deg); opacity: .6; }
+
+.termometro {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: rgba(10,15,38,.8);
+}
+
+.termometro strong { font: 700 1.3rem 'Space Grotesk', sans-serif; }
+.termometro small { color: var(--suave); font-size: .63rem; }
+
+.metricas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.metricas > div > span {
+  display: block;
+  color: var(--suave);
+  font-size: .7rem;
+  min-height: 38px;
+}
+
+.metricas strong {
+  display: block;
+  font: 600 1.1rem 'Space Grotesk', sans-serif;
+  margin: 4px 0 9px;
+}
+
+.barra {
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+
+.barra i {
+  display: block;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--roxo), var(--ciano));
+  transition: width .2s;
+}
+
+.mensagem {
+  margin: 20px 0 0;
+  padding: 12px;
+  border: 1px solid rgba(91,228,239,.17);
+  border-radius: 11px;
+  background: rgba(91,228,239,.055);
+  color: #d9fbff;
+  font-size: .78rem;
+}
+
+.graficos-grid { grid-template-columns: 1fr 1fr; }
+.grafico-card h3 { margin: 8px 0; }
+.grafico-card > p { color: var(--suave); font-size: .8rem; }
+
+.legenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  color: var(--suave);
+  font-size: .68rem;
+  margin: 14px 0;
+}
+
+.legenda span { display: flex; align-items: center; gap: 7px; }
+.legenda i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.ponto-roxo { background: var(--roxo); }
+.ponto-ciano { background: var(--ciano); }
+
+canvas { width: 100%; height: 220px; display: block; }
+
+.eixos {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #8d99b8;
+  font-size: .62rem;
+}
+
+.grafico-card > small { color: #8793b5; font-size: .67rem; }
+
+.decisao { position: relative; overflow: hidden; }
+.decisao h3 { font-size: 1.5rem; }
+.decisao > p { color: var(--suave); font-size: .9rem; line-height: 1.8; }
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 20px 0;
+  color: var(--ciano);
+  font-size: .75rem;
+}
+
+.status i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ciano);
+  box-shadow: 0 0 12px var(--ciano);
+}
+
+.log {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: rgba(3,8,24,.25);
+}
+
+.log span { color: var(--ciano); }
+.log p { color: #9faccb; font: .72rem/1.6 monospace; margin: 0; }
+
+.desafio-secao {
+  display: grid;
+  grid-template-columns: .8fr 1.2fr;
+  gap: 35px;
+  align-items: center;
+}
+
+.quiz-progresso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ciano);
+  font-size: .65rem;
+  font-weight: 700;
+}
+
+.quiz-progresso > div {
+  width: 95px;
+  height: 4px;
+  border-radius: 9px;
+  background: rgba(255,255,255,.1);
+  overflow: hidden;
+}
+
+.quiz-progresso i {
+  display: block;
+  height: 100%;
+  width: 33%;
+  background: var(--ciano);
+  transition: width .2s;
+}
+
+.quiz-card h3 { font-size: 1.25rem; margin: 22px 0; }
+
+.opcoes-quiz { display: grid; gap: 9px; }
+
+.opcao-quiz {
+  text-align: left;
+  border: 1px solid var(--borda);
+  border-radius: 11px;
+  background: rgba(255,255,255,.025);
+  color: var(--texto);
+  padding: 12px 14px;
+  font-size: .81rem;
+  cursor: pointer;
+}
+
+.opcao-quiz:hover:not(:disabled) { border-color: var(--roxo); }
+.opcao-quiz:disabled { cursor: default; }
+.opcao-quiz.correta { border-color: #5be4af; background: rgba(91,228,175,.1); }
+.opcao-quiz.errada { border-color: #ff8fba; background: rgba(255,143,186,.09); }
+
+.feedback { color: var(--suave); font-size: .78rem; min-height: 24px; margin: 14px 0; }
+button:disabled { opacity: .45; cursor: not-allowed; }
+
+.cta-final {
+  max-width: 1144px;
+  margin: 15px auto 60px;
+  padding: 34px;
+  border: 1px solid rgba(165,139,255,.25);
+  border-radius: 24px;
+  background: linear-gradient(110deg, #171b43, #12213c);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+}
+
+.cta-final h2 { margin: 10px 0; }
+.cta-final p { color: var(--suave); font-size: .83rem; margin: 0; }
+.claro { background: var(--texto); color: #141936; white-space: nowrap; }
+
+.rodape {
+  max-width: 1144px;
+  margin: auto;
+  padding: 22px 28px 32px;
+  border-top: 1px solid var(--borda);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--suave);
+  font-size: .72rem;
+}
+
+.rodape p { margin: 0; }
+.rodape > a:last-child { color: var(--ciano); }
+
+@media (max-width: 850px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-arte { min-height: 300px; }
+  .cabecalho { align-items: start; flex-direction: column; gap: 12px; }
+  .cartoes { grid-template-columns: 1fr 1fr; }
+  .card-ciencia:last-child { grid-column: span 2; }
+  .simulador-grid, .sensores-grid { grid-template-columns: 1fr; }
+  .desafio-secao { grid-template-columns: 1fr; gap: 20px; }
+  .cta-final { margin-inline: 25px; }
+}
+
+@media (max-width: 600px) {
+  .topo { padding: 14px 18px; }
+  .menu-botao { display: block; }
+  .menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 15px;
+    right: 15px;
+    padding: 14px;
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    background: #111831;
+    flex-direction: column;
+    gap: 0;
   }
-
-  if (luzSensorValor) {
-    luzSensorValor.textContent = `${iluminacao}%`;
-  }
-
-  if (nivelSensorValor) {
-    nivelSensorValor.textContent = `${nivel}%`;
-  }
-
-  if (!decisao) return;
-
-  let mensagem;
-
-  if (nivel < 25) {
-    mensagem =
-      "⚠ Nível baixo: o controlador recomenda verificar a água antes de operar equipamentos.";
-  } else if (temp < 20) {
-    mensagem =
-      "❄ Água abaixo de 20 °C: o sistema sugere avaliar a necessidade de aquecimento.";
-  } else if (temp > 32) {
-    mensagem =
-      "♨ Água acima de 32 °C: o sistema recomenda conferir a temperatura desejada e as condições de segurança.";
-  } else if (iluminacao < 30) {
-    mensagem =
-      "☾ Pouca luminosidade: a contribuição solar pode estar reduzida neste cenário.";
-  } else {
-    mensagem =
-      "✓ Leituras dentro das faixas demonstrativas: o controlador continua monitorando os sensores.";
-  }
-
-  decisao.textContent = mensagem;
+  .menu.aberto { display: flex; }
+  .menu a { padding: 10px; }
+  .hero { padding: 40px 20px; }
+  .hero h1 { font-size: clamp(2.5rem, 11vw, 3.5rem); }
+  .hero-arte { min-height: 270px; }
+  .orb { width: 145px; height: 145px; }
+  .anel { width: 250px; }
+  .anel2 { width: 280px; }
+  .anel3 { height: 230px; }
+  .faixa { grid-template-columns: 1fr; margin-inline: 20px; padding: 20px 0; }
+  .secao { padding: 45px 20px; }
+  .cartoes, .graficos-grid { grid-template-columns: 1fr; }
+  .card-ciencia:last-child { grid-column: auto; }
+  .painel { padding: 20px; }
+  .metricas { gap: 9px; }
+  .metricas > div > span { font-size: .65rem; }
+  .metricas strong { font-size: .95rem; }
+  .cta-final { margin: 10px 20px 40px; padding: 24px; flex-direction: column; align-items: start; }
+  .cta-final .botao { width: 100%; }
+  .rodape { padding: 22px 20px; flex-wrap: wrap; }
+  .rodape p { flex-basis: 100%; order: 3; }
 }
 
-if (temperaturaSensor) {
-  temperaturaSensor.addEventListener("input", atualizarSensores);
-}
-
-if (luzSensor) {
-  luzSensor.addEventListener("input", atualizarSensores);
-}
-
-if (nivelSensor) {
-  nivelSensor.addEventListener("input", atualizarSensores);
-}
-
-atualizarSensores();
-
-
-/* 7. ANO AUTOMÁTICO */
-
-const anoAtual = document.getElementById("anoAtual");
-
-if (anoAtual) {
-  anoAtual.textContent = new Date().getFullYear();
-}
-
-
-/* 8. RESPEITAR MENOS MOVIMENTO */
-
-const movimentoReduzido = window.matchMedia(
-  "(prefers-reduced-motion: reduce)"
-);
-
-if (movimentoReduzido.matches && ondaVisual) {
-  ondaVisual.style.animation = "none";
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: .01ms !important; }
 }
