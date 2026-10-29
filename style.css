@@ -1,441 +1,473 @@
+
+"use strict";
+
 document.addEventListener("DOMContentLoaded", () => {
   const $ = (id) => document.getElementById(id);
 
   // MENU PARA CELULAR
   const menuBotao = $("menuBotao");
-  const menu = $("menuNavegacao");
+  const menu = $("menu");
 
-  menuBotao.addEventListener("click", () => {
-    const aberto = menu.classList.toggle("aberto");
-    menuBotao.setAttribute("aria-expanded", String(aberto));
-  });
-
-  menu.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => {
-      menu.classList.remove("aberto");
-      menuBotao.setAttribute("aria-expanded", "false");
+  if (menuBotao && menu) {
+    menuBotao.addEventListener("click", () => {
+      const aberto = menu.classList.toggle("aberto");
+      menuBotao.setAttribute("aria-expanded", String(aberto));
+      menuBotao.setAttribute(
+        "aria-label",
+        aberto ? "Fechar menu" : "Abrir menu"
+      );
     });
-  });
 
-  // FUNÇÃO PARA CONECTAR OS SLIDERS AOS VALORES
-  function conectarSlider(id, idSaida, formatar, callback) {
-    const controle = $(id);
-    const saida = $(idSaida);
-
-    if (!controle || !saida) {
-      console.warn("Elemento não encontrado:", id);
-      return;
-    }
-
-    function atualizar() {
-      const valor = Number(controle.value);
-      saida.textContent = formatar(valor);
-
-      if (callback) callback();
-    }
-
-    controle.addEventListener("input", atualizar);
-    controle.addEventListener("change", atualizar);
-    atualizar();
+    menu.querySelectorAll("a").forEach((link) => {
+      link.addEventListener("click", () => {
+        menu.classList.remove("aberto");
+        menuBotao.setAttribute("aria-expanded", "false");
+      });
+    });
   }
 
   // SIMULADOR DA PISCINA
+  const controlesPiscina = ["sol", "cobertura", "aquecimento"];
+
   function atualizarPiscina() {
     const sol = Number($("sol").value);
     const cobertura = Number($("cobertura").value);
     const aquecimento = Number($("aquecimento").value);
 
-    const ganho = sol;
-    const perda = Math.min(
-      100,
-      Math.round(cobertura ? 15 + sol * 0.08 : 38 + sol * 0.18)
-    );
-    const temperatura = Math.round(
-      22 + sol * 0.075 + (cobertura ? 2 : 0) + (aquecimento ? 5 : 0)
-    );
-    const consumo = aquecimento ? 85 : 12;
+    $("solValor").textContent = sol + "%";
+    $("coberturaValor").textContent = cobertura + "%";
+    $("aquecimentoValor").textContent = aquecimento + "%";
 
-    $("solValor").textContent = `${sol}%`;
-    $("coberturaValor").textContent = cobertura ? "Ligada" : "Retirada";
-    $("aquecimentoValor").textContent = aquecimento ? "Ligado" : "Desligado";
+    $("energiaSolar").textContent = sol + "%";
+    $("calorConservado").textContent = cobertura + "%";
+    $("energiaAuxiliar").textContent = aquecimento + "%";
 
-    $("ganhoSolar").textContent = `${ganho}%`;
-    $("perdaCalor").textContent = `${perda}%`;
-    $("tempEstimativa").textContent = `${temperatura} °C`;
-    $("consumo").textContent = aquecimento ? "Alto" : "Baixo";
+    // Modelo didático ilustrativo, não uma previsão física real.
+    const temperatura =
+      18 +
+      sol * 0.10 +
+      cobertura * 0.035 +
+      aquecimento * 0.055;
 
-    $("barraSolar").style.width = `${ganho}%`;
-    $("barraPerda").style.width = `${perda}%`;
-    $("barraConsumo").style.width = `${consumo}%`;
-
-    $("sol").setAttribute("aria-valuetext", `${sol}% de intensidade solar`);
-    $("cobertura").setAttribute(
-      "aria-valuetext",
-      cobertura ? "Cobertura colocada" : "Cobertura retirada"
-    );
-    $("aquecimento").setAttribute(
-      "aria-valuetext",
-      aquecimento ? "Aquecimento ligado" : "Aquecimento desligado"
-    );
-
-    const solVisual = document.querySelector(".sol-visual");
-    if (solVisual) solVisual.style.opacity = String(Math.max(0.2, sol / 100));
-
-    const piscina = $("piscinaIlustracao");
-    piscina.style.filter = `saturate(${0.7 + sol / 180})`;
+    $("temperaturaPiscina").textContent =
+      temperatura.toLocaleString("pt-BR", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1
+      }) + " °C";
 
     let mensagem;
 
-    if (sol >= 60 && cobertura) {
-      mensagem = "Boa captação solar! A cobertura também ajuda a reduzir a perda de calor.";
-    } else if (sol < 30 && !cobertura) {
-      mensagem = "Pouca luz solar e sem cobertura: a perda de calor relativa é maior neste modelo.";
-    } else if (aquecimento) {
-      mensagem = "O aquecimento auxiliar está ligado. Ele pode elevar a temperatura, mas aumenta o consumo de energia.";
-    } else if (!cobertura) {
-      mensagem = "Sem cobertura térmica, mais calor pode escapar para o ambiente.";
+    if (sol < 25 && aquecimento < 25) {
+      mensagem = "Pouca energia disponível: o aquecimento será limitado.";
+    } else if (cobertura >= 70) {
+      mensagem = "Boa conservação de calor no modelo simulado!";
+    } else if (sol >= 70) {
+      mensagem = "A contribuição solar está elevada.";
     } else {
-      mensagem = "Com menos luz solar, o ganho diminui. A cobertura ajuda a conservar o calor.";
+      mensagem = "Ajuste os controles e compare os resultados.";
     }
 
-    $("mensagemSimulacao").textContent = mensagem;
-    desenharGraficoSolar(sol);
+    $("mensagemPiscina").textContent = mensagem;
+    desenharGraficoSolar();
   }
 
-  ["sol", "cobertura", "aquecimento"].forEach((id) => {
+  controlesPiscina.forEach((id) => {
     $(id).addEventListener("input", atualizarPiscina);
-    $(id).addEventListener("change", atualizarPiscina);
   });
 
-  atualizarPiscina();
+  $("resetPiscina").addEventListener("click", () => {
+    $("sol").value = 70;
+    $("cobertura").value = 50;
+    $("aquecimento").value = 20;
+    atualizarPiscina();
+  });
 
-  // SENSORES E DECISÕES AUTOMÁTICAS
-  function atualizarDecisao() {
-    const temp = Number($("temperaturaSensor").value);
-    const luz = Number($("luzSensor").value);
-    const nivel = Number($("nivelSensor").value);
-
-    let titulo = "Tudo dentro da faixa demonstrativa";
-    let mensagem = "Sensores monitorados. As condições estão dentro das faixas demonstrativas.";
-    let status = "Monitoramento ativo";
-    let log = `Leituras: ${temp} °C, luminosidade ${luz}%, nível ${nivel}%.`;
-    let cor = "#5be4ef";
-
-    if (nivel < 25) {
-      titulo = "Atenção ao nível da água";
-      mensagem = "O nível está baixo neste cenário. Verifique a água antes de operar equipamentos.";
-      status = "Atenção necessária";
-      log = "Regra ativada: nível abaixo de 25%.";
-      cor = "#ff8fba";
-    } else if (temp < 20) {
-      titulo = "Água abaixo da faixa confortável";
-      mensagem = "O sistema sugere avaliar a necessidade de aquecimento e o consumo de energia.";
-      status = "Aquecimento a avaliar";
-      log = "Regra ativada: temperatura abaixo de 20 °C.";
-      cor = "#a58bff";
-    } else if (temp > 32) {
-      titulo = "Temperatura elevada";
-      mensagem = "A água está acima de 32 °C neste exemplo. Confira a temperatura desejada.";
-      status = "Verificar temperatura";
-      log = "Regra ativada: temperatura acima de 32 °C.";
-      cor = "#ff8fba";
-    } else if (luz < 30) {
-      titulo = "Pouca luminosidade";
-      mensagem = "A contribuição solar pode estar reduzida. O controlador pode priorizar a conservação do calor.";
-      status = "Energia solar reduzida";
-      log = "Regra ativada: luminosidade abaixo de 30%.";
-      cor = "#a58bff";
-    }
-
-    $("tituloDecisao").textContent = titulo;
-    $("decisao").textContent = mensagem;
-    $("statusTexto").textContent = status;
-    $("logSistema").textContent = log;
-    $("statusDecisao").style.background = cor;
-    $("statusDecisao").style.boxShadow = `0 0 12px ${cor}`;
-  }
-
-  conectarSlider(
-    "temperaturaSensor",
-    "tempSensorValor",
-    (v) => `${v} °C`,
-    atualizarDecisao
-  );
-
-  conectarSlider(
-    "luzSensor",
-    "luzSensorValor",
-    (v) => `${v}%`,
-    atualizarDecisao
-  );
-
-  conectarSlider(
-    "nivelSensor",
-    "nivelSensorValor",
-    (v) => `${v}%`,
-    atualizarDecisao
-  );
-
-  // CONFIGURAÇÃO DOS GRÁFICOS
+  // DIMENSIONAMENTO DOS GRÁFICOS
   function prepararCanvas(canvas) {
-    if (!canvas) return null;
+    const largura = Math.max(260, canvas.clientWidth);
+    const altura = Math.max(200, canvas.clientHeight);
+    const escala = Math.min(window.devicePixelRatio || 1, 2);
 
-    const largura = Math.max(280, canvas.clientWidth);
-    const altura = canvas.clientHeight || 220;
-    const escala = Math.max(1, window.devicePixelRatio || 1);
-
-    canvas.width = largura * escala;
-    canvas.height = altura * escala;
+    canvas.width = Math.round(largura * escala);
+    canvas.height = Math.round(altura * escala);
 
     const ctx = canvas.getContext("2d");
     ctx.setTransform(escala, 0, 0, escala, 0, 0);
-    ctx.clearRect(0, 0, largura, altura);
 
     return { ctx, largura, altura };
   }
 
-  // GRÁFICO DE RADIAÇÃO DO CORPO NEGRO
+  function texto(ctx, valor, x, y, cor = "#b9c5e3", tamanho = 11) {
+    ctx.fillStyle = cor;
+    ctx.font = `${tamanho}px Arial`;
+    ctx.fillText(valor, x, y);
+  }
+
+  // GRÁFICO DA RADIAÇÃO DO CORPO NEGRO
   function desenharGraficoCorpoNegro() {
-    const dados = prepararCanvas($("graficoCorpoNegro"));
-    if (!dados) return;
+    const canvas = $("graficoCorpoNegro");
+    if (!canvas) return;
 
-    const { ctx, largura: w, altura: h } = dados;
-    const m = { esquerda: 38, direita: 12, topo: 15, baixo: 28 };
-    const gw = w - m.esquerda - m.direita;
-    const gh = h - m.topo - m.baixo;
+    const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
+    const esquerda = 43;
+    const direita = 12;
+    const topo = 18;
+    const baixo = 37;
+    const gw = w - esquerda - direita;
+    const gh = h - topo - baixo;
 
-    ctx.strokeStyle = "rgba(170,180,209,.15)";
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#0b142b";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(185,197,227,.13)";
     ctx.lineWidth = 1;
-    ctx.font = "10px sans-serif";
-    ctx.fillStyle = "#8793b5";
 
     for (let i = 0; i <= 4; i++) {
-      const y = m.topo + gh * i / 4;
+      const y = topo + gh * i / 4;
       ctx.beginPath();
-      ctx.moveTo(m.esquerda, y);
-      ctx.lineTo(w - m.direita, y);
+      ctx.moveTo(esquerda, y);
+      ctx.lineTo(w - direita, y);
       ctx.stroke();
     }
 
-    ctx.beginPath();
-    ctx.moveTo(m.esquerda, m.topo);
-    ctx.lineTo(m.esquerda, h - m.baixo);
-    ctx.lineTo(w - m.direita, h - m.baixo);
-    ctx.stroke();
+    for (let i = 0; i <= 4; i++) {
+      const x = esquerda + gw * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(x, topo);
+      ctx.lineTo(x, h - baixo);
+      ctx.stroke();
+    }
 
-    ctx.fillText("Intensidade", 3, 11);
-    ctx.fillText("λ", w - 14, h - 8);
+    texto(ctx, "Intensidade relativa", 8, 13, "#b9c5e3", 10);
+    texto(ctx, "Comprimento de onda (nm)", w / 2 - 70, h - 9, "#b9c5e3", 10);
 
-    function curva(temperatura, cor) {
+    [200, 400, 600, 800, 1000].forEach((v, i) => {
+      texto(ctx, String(v), esquerda + gw * i / 4 - 10, h - 21);
+    });
+
+    const T = Number($("temperaturaCorpo").value);
+    $("temperaturaCorpoValor").textContent = T + " K";
+
+    // Lei de Planck: intensidade espectral relativa.
+    // Lambda é medido em metros.
+    function planck(lambdaNm, temperatura) {
+      const lambda = lambdaNm * 1e-9;
+      const c2 = 1.4387769e-2;
+      const expoente = c2 / (lambda * temperatura);
+
+      if (expoente > 700) return 0;
+
+      return 1 / (
+        Math.pow(lambda, 5) * Math.expm1(expoente)
+      );
+    }
+
+    const temperaturas = [
+      { valor: 3000, cor: "#a78bfa" },
+      { valor: T, cor: "#56e5f2" },
+      { valor: 5500, cor: "#7cf7c4" }
+    ];
+
+    const curvas = temperaturas.map((serie) => {
       const pontos = [];
-      let maximo = 0;
 
-      for (let i = 0; i <= 150; i++) {
-        const x = 0.04 + (i / 150) * 1.5;
-        const y = 1 / (
-          Math.pow(x, 5) *
-          (Math.exp(1 / (temperatura * x)) - 1)
-        );
-
-        pontos.push(y);
-        maximo = Math.max(maximo, y);
+      for (let lambda = 200; lambda <= 1000; lambda += 4) {
+        pontos.push({
+          lambda,
+          intensidade: planck(lambda, serie.valor)
+        });
       }
 
-      ctx.beginPath();
+      const maximo = Math.max(...pontos.map(p => p.intensidade)) || 1;
 
-      pontos.forEach((valor, i) => {
-        const x = m.esquerda + (i / 150) * gw;
-        const y = m.topo + gh - (valor / maximo) * gh * 0.83;
+      return {
+        ...serie,
+        pontos: pontos.map(p => ({
+          lambda: p.lambda,
+          intensidade: p.intensidade / maximo
+        }))
+      };
+    });
+
+    curvas.forEach((serie) => {
+      ctx.beginPath();
+      ctx.strokeStyle = serie.cor;
+      ctx.lineWidth = serie.valor === T ? 2.8 : 1.6;
+
+      serie.pontos.forEach((p, i) => {
+        const x = esquerda + ((p.lambda - 200) / 800) * gw;
+        const y = topo + gh * (1 - p.intensidade);
 
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       });
 
-      ctx.strokeStyle = cor;
-      ctx.lineWidth = 2.5;
       ctx.stroke();
-    }
-
-    curva(0.72, "#a58bff");
-    curva(1.12, "#5be4ef");
-  }
-
-  // GRÁFICO QUE MUDA CON A INTENSIDADE SOLAR
-  function desenharGraficoSolar(sol = Number($("sol").value)) {
-    const dados = prepararCanvas($("graficoSolar"));
-    if (!dados) return;
-
-    const { ctx, largura: w, altura: h } = dados;
-    const m = { esquerda: 35, direita: 12, topo: 15, baixo: 28 };
-    const gw = w - m.esquerda - m.direita;
-    const gh = h - m.topo - m.baixo;
-
-    ctx.font = "10px sans-serif";
-    ctx.fillStyle = "#8793b5";
-    ctx.strokeStyle = "rgba(170,180,209,.15)";
-
-    for (let i = 0; i <= 4; i++) {
-      const y = m.topo + gh * i / 4;
-
-      ctx.beginPath();
-      ctx.moveTo(m.esquerda, y);
-      ctx.lineTo(w - m.direita, y);
-      ctx.stroke();
-
-      ctx.fillText(String(100 - i * 25), 4, y + 3);
-    }
-
-    ctx.beginPath();
-    ctx.moveTo(m.esquerda, m.topo);
-    ctx.lineTo(m.esquerda, h - m.baixo);
-    ctx.lineTo(w - m.direita, h - m.baixo);
-    ctx.stroke();
-
-    const valores = [0, 25, 50, 75, 100];
-    const larguraBarra = Math.min(32, gw / 9);
-
-    valores.forEach((valor, i) => {
-      const x = m.esquerda + (i + 0.5) * gw / valores.length - larguraBarra / 2;
-      const alturaBarra = gh * valor / 100;
-      const maisProximo = valores.reduce((melhor, atual) =>
-        Math.abs(atual - sol) < Math.abs(melhor - sol) ? atual : melhor
-      , valores[0]);
-
-      ctx.fillStyle = valor === maisProximo
-        ? "#5be4ef"
-        : "rgba(128,92,255,.65)";
-
-      ctx.beginPath();
-
-      if (ctx.roundRect) {
-        ctx.roundRect(
-          x,
-          h - m.baixo - alturaBarra,
-          larguraBarra,
-          alturaBarra,
-          [5, 5, 0, 0]
-        );
-      } else {
-        ctx.rect(x, h - m.baixo - alturaBarra, larguraBarra, alturaBarra);
-      }
-
-      ctx.fill();
-      ctx.fillStyle = "#8793b5";
-      ctx.textAlign = "center";
-      ctx.fillText(String(valor), x + larguraBarra / 2, h - 9);
     });
 
-    const posicao = m.esquerda + (sol / 100) * gw;
-    ctx.strokeStyle = "#f4f6ff";
-    ctx.setLineDash([4, 4]);
+    texto(ctx, "3000 K", esquerda + 8, topo + 15, "#a78bfa", 10);
+    texto(ctx, T + " K", esquerda + 75, topo + 15, "#56e5f2", 10);
+    texto(ctx, "5500 K", esquerda + 135, topo + 15, "#7cf7c4", 10);
+  }
+
+  $("temperaturaCorpo").addEventListener(
+    "input",
+    desenharGraficoCorpoNegro
+  );
+
+  // GRÁFICO DA CONTRIBUIÇÃO SOLAR
+  function desenharGraficoSolar() {
+    const canvas = $("graficoSolar");
+    if (!canvas) return;
+
+    const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
+    const esquerda = 42;
+    const direita = 14;
+    const topo = 22;
+    const baixo = 36;
+    const gw = w - esquerda - direita;
+    const gh = h - topo - baixo;
+
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = "#0b142b";
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.strokeStyle = "rgba(185,197,227,.13)";
+
+    for (let i = 0; i <= 4; i++) {
+      const y = topo + gh * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(esquerda, y);
+      ctx.lineTo(w - direita, y);
+      ctx.stroke();
+
+      texto(ctx, String(100 - i * 25), 7, y + 4);
+    }
+
+    for (let i = 0; i <= 4; i++) {
+      const x = esquerda + gw * i / 4;
+      ctx.beginPath();
+      ctx.moveTo(x, topo);
+      ctx.lineTo(x, h - baixo);
+      ctx.stroke();
+
+      texto(ctx, String(i * 25), x - 7, h - 16);
+    }
+
+    texto(ctx, "Contribuição (%)", 8, 13, "#b9c5e3", 10);
+    texto(ctx, "Intensidade solar (%)", w / 2 - 63, h - 3, "#b9c5e3", 10);
+
+    const solAtual = Number($("sol").value);
+    const pontos = [];
+
+    for (let x = 0; x <= 100; x += 2) {
+      pontos.push({
+        x,
+        y: x * 0.8
+      });
+    }
+
     ctx.beginPath();
-    ctx.moveTo(posicao, m.topo);
-    ctx.lineTo(posicao, h - m.baixo);
+    ctx.strokeStyle = "#a78bfa";
+    ctx.lineWidth = 2.5;
+
+    pontos.forEach((p, i) => {
+      const x = esquerda + (p.x / 100) * gw;
+      const y = topo + (1 - p.y / 100) * gh;
+
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+
     ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.textAlign = "left";
+
+    const marcadorX = esquerda + solAtual / 100 * gw;
+    const marcadorY = topo + (1 - solAtual * 0.8 / 100) * gh;
+
+    ctx.beginPath();
+    ctx.arc(marcadorX, marcadorY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#56e5f2";
+    ctx.fill();
+
+    texto(
+      ctx,
+      `Sol atual: ${solAtual}%`,
+      Math.max(esquerda + 5, Math.min(marcadorX - 35, w - 100)),
+      Math.max(topo + 15, marcadorY - 12),
+      "#56e5f2",
+      10
+    );
   }
 
-  function redesenharGraficos() {
-    desenharGraficoCorpoNegro();
-    desenharGraficoSolar();
+  // SENSORES E TOMADA DE DECISÃO
+  const sensores = ["temperaturaSensor", "luzSensor", "nivelSensor"];
+
+  function atualizarDecisao() {
+    const temperatura = Number($("temperaturaSensor").value);
+    const luz = Number($("luzSensor").value);
+    const nivel = Number($("nivelSensor").value);
+
+    $("temperaturaSensorValor").textContent = temperatura + " °C";
+    $("luzSensorValor").textContent = luz + "%";
+    $("nivelSensorValor").textContent = nivel + "%";
+
+    let titulo = "Sistema em monitoramento";
+    let decisao = "Condições dentro dos limites configurados.";
+    let status = "● Sistema ativo";
+
+    if (nivel < 20) {
+      titulo = "Nível de água baixo";
+      decisao = "O sensor detectou nível reduzido. Recomenda-se verificar o nível antes de acionar equipamentos.";
+      status = "● Atenção ao nível";
+    } else if (temperatura >= 38) {
+      titulo = "Temperatura elevada";
+      decisao = "O sistema recomenda verificar a temperatura e reduzir o aquecimento, se necessário.";
+      status = "● Atenção à temperatura";
+    } else if (luz < 20) {
+      titulo = "Pouca luminosidade";
+      decisao = "A contribuição solar pode estar reduzida. O sistema pode avaliar outras fontes de energia.";
+      status = "● Pouca luz disponível";
+    } else {
+      titulo = "Condições monitoradas";
+      decisao = "Os sensores estão enviando dados. O sistema não identificou os alertas configurados.";
+      status = "● Monitoramento ativo";
+    }
+
+    $("tituloDecisao").textContent = titulo;
+    $("decisao").textContent = decisao;
+    $("statusTexto").textContent = status;
+
+    const registro = $("logSistema");
+    const linha = document.createElement("li");
+    linha.textContent =
+      `${temperatura} °C · luz ${luz}% · água ${nivel}%`;
+
+    registro.prepend(linha);
+
+    while (registro.children.length > 4) {
+      registro.lastElementChild.remove();
+    }
   }
 
-  redesenharGraficos();
-
-  window.addEventListener("resize", () => {
-    redesenharGraficos();
+  sensores.forEach((id) => {
+    $(id).addEventListener("input", atualizarDecisao);
   });
 
-  // QUIZ INTERATIVO
+  // QUIZ
   const perguntas = [
     {
-      pergunta: "O que acontece quando a intensidade da luz solar aumenta?",
+      pergunta: "O que determina a energia de um fóton?",
       opcoes: [
-        "O ganho solar sempre cai.",
-        "O ganho solar relativo tende a aumentar.",
-        "A cobertura térmica deixa de funcionar."
+        "Apenas a distância percorrida pela luz",
+        "A frequência da radiação",
+        "A cor do objeto que recebe a luz",
+        "A massa do fóton"
       ],
       correta: 1,
-      explicacao: "Isso mesmo! Neste modelo, mais intensidade solar significa maior ganho solar relativo."
+      explicacao: "A energia do fóton é dada por E = h · f: ela é proporcional à frequência."
     },
     {
-      pergunta: "Para que serve uma cobertura térmica na piscina?",
+      pergunta: "O que acontece quando a temperatura de um corpo negro aumenta?",
       opcoes: [
-        "Para criar luz solar.",
-        "Para impedir toda troca de energia para sempre.",
-        "Para ajudar a reduzir a perda de calor."
+        "Ele deixa de emitir radiação",
+        "A radiação sempre desaparece",
+        "O pico da emissão se desloca para comprimentos de onda menores",
+        "Sua temperatura diminui automaticamente"
       ],
       correta: 2,
-      explicacao: "Correto! A cobertura ajuda a diminuir a perda de calor, mas não elimina todas as trocas térmicas."
+      explicacao: "Pela lei de Wien, temperaturas maiores correspondem a picos em comprimentos de onda menores."
     },
     {
-      pergunta: "Qual é a sequência básica de um sistema automatizado?",
+      pergunta: "Qual é a principal função de uma cobertura térmica na piscina?",
       opcoes: [
-        "Sensor → controlador → ação.",
-        "Ação → sensor → desaparece.",
-        "Luz → água → sensor, sempre."
+        "Aumentar a gravidade",
+        "Reduzir a perda de calor",
+        "Produzir luz visível",
+        "Transformar água em eletricidade"
+      ],
+      correta: 1,
+      explicacao: "A cobertura ajuda a reduzir perdas de calor, principalmente as associadas à evaporação."
+    },
+    {
+      pergunta: "Qual é a função de um sensor em um sistema robótico?",
+      opcoes: [
+        "Coletar informações do ambiente",
+        "Garantir energia infinita",
+        "Substituir todos os motores",
+        "Impedir qualquer falha"
       ],
       correta: 0,
-      explicacao: "Perfeito! O sensor mede, o controlador interpreta e o sistema executa uma ação."
+      explicacao: "Sensores coletam dados que podem ser interpretados pelo sistema de controle."
+    },
+    {
+      pergunta: "Qual tecnologia converte luz solar em energia elétrica?",
+      opcoes: [
+        "Cobertura térmica comum",
+        "Termômetro de mercúrio",
+        "Painel fotovoltaico",
+        "Sensor de nível"
+      ],
+      correta: 2,
+      explicacao: "Células fotovoltaicas convertem parte da energia da luz em energia elétrica."
     }
   ];
 
-  let perguntaAtual = 0;
-  let pontuacao = 0;
+  let indice = 0;
+  let pontos = 0;
   let respondeu = false;
-  let terminou = false;
 
   function mostrarPergunta() {
-    const pergunta = perguntas[perguntaAtual];
     respondeu = false;
-    terminou = false;
+
+    const atual = perguntas[indice];
 
     $("quizContador").textContent =
-      `PERGUNTA ${perguntaAtual + 1} DE ${perguntas.length}`;
+      `Pergunta ${indice + 1} de ${perguntas.length}`;
 
+    $("quizPontos").textContent = `Pontos: ${pontos}`;
     $("quizBarra").style.width =
-      `${((perguntaAtual + 1) / perguntas.length) * 100}%`;
+      `${(indice / perguntas.length) * 100}%`;
 
-    $("quizPergunta").textContent = pergunta.pergunta;
-    $("feedbackQuiz").textContent = "Escolha uma resposta.";
+    $("quizPergunta").textContent = atual.pergunta;
+    $("feedbackQuiz").textContent = "";
     $("quizProximo").disabled = true;
-
     $("quizProximo").textContent =
-      perguntaAtual === perguntas.length - 1
+      indice === perguntas.length - 1
         ? "Ver resultado →"
         : "Próxima pergunta →";
 
     const opcoes = $("opcoesQuiz");
     opcoes.replaceChildren();
 
-    pergunta.opcoes.forEach((texto, indice) => {
+    atual.opcoes.forEach((opcao, i) => {
       const botao = document.createElement("button");
       botao.type = "button";
-      botao.className = "opcao-quiz";
-      botao.textContent = texto;
+      botao.className = "opcao";
+      botao.textContent = `${String.fromCharCode(65 + i)}. ${opcao}`;
 
       botao.addEventListener("click", () => {
         if (respondeu) return;
-
         respondeu = true;
-        const acertou = indice === pergunta.correta;
 
-        if (acertou) pontuacao++;
-
-        [...opcoes.children].forEach((opcao, i) => {
-          opcao.disabled = true;
-
-          if (i === pergunta.correta) {
-            opcao.classList.add("correta");
-          } else if (i === indice) {
-            opcao.classList.add("errada");
-          }
+        const botoes = opcoes.querySelectorAll("button");
+        botoes.forEach((b) => {
+          b.disabled = true;
         });
 
-        $("feedbackQuiz").textContent = acertou
-          ? pergunta.explicacao
-          : `Não foi dessa vez! ${pergunta.explicacao}`;
+        if (i === atual.correta) {
+          pontos++;
+          botao.classList.add("certa");
+          $("feedbackQuiz").textContent = "✓ Acertou! " + atual.explicacao;
+        } else {
+          botao.classList.add("errada");
+          botoes[atual.correta].classList.add("certa");
+          $("feedbackQuiz").textContent = "Ainda não! " + atual.explicacao;
+        }
+
+        $("quizPontos").textContent = `Pontos: ${pontos}`;
+        $("quizBarra").style.width =
+          `${((indice + 1) / perguntas.length) * 100}%`;
 
         $("quizProximo").disabled = false;
       });
@@ -445,38 +477,60 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   $("quizProximo").addEventListener("click", () => {
-    if (terminou) {
-      perguntaAtual = 0;
-      pontuacao = 0;
-      mostrarPergunta();
-      return;
-    }
-
     if (!respondeu) return;
 
-    if (perguntaAtual < perguntas.length - 1) {
-      perguntaAtual++;
-      mostrarPergunta();
+    indice++;
+
+    if (indice >= perguntas.length) {
+      $("quizContador").textContent = "Desafio concluído!";
+      $("quizPergunta").textContent =
+        `Você acertou ${pontos} de ${perguntas.length} perguntas!`;
+
+      $("quizBarra").style.width = "100%";
+      $("opcoesQuiz").replaceChildren();
+      $("feedbackQuiz").textContent =
+        pontos === perguntas.length
+          ? "Perfeito! Você dominou todos os desafios. ✨"
+          : "Muito bem por chegar até aqui! Revise os conceitos e tente novamente.";
+
+      $("quizProximo").textContent = "Jogar novamente ↻";
+      $("quizProximo").disabled = false;
+      respondeu = true;
       return;
     }
 
-    terminou = true;
-
-    $("quizContador").textContent = "DESAFIO CONCLUÍDO";
-    $("quizPergunta").textContent =
-      `Você acertou ${pontuacao} de ${perguntas.length} perguntas!`;
-
-    $("opcoesQuiz").replaceChildren();
-
-    $("feedbackQuiz").textContent =
-      pontuacao === perguntas.length
-        ? "Mandou muito bem! Você dominou os conceitos principais."
-        : "Boa! Revise os conceitos e tente novamente para melhorar sua pontuação.";
-
-    $("quizBarra").style.width = "100%";
-    $("quizProximo").textContent = "Tentar novamente ↻";
-    $("quizProximo").disabled = false;
+    mostrarPergunta();
   });
 
+  // O botão vira opção de reiniciar após o fim.
+  $("quizProximo").addEventListener("click", () => {
+    if (
+      indice >= perguntas.length &&
+      respondeu
+    ) {
+      indice = 0;
+      pontos = 0;
+      mostrarPergunta();
+    }
+  });
+
+  // INICIALIZAÇÃO
+  atualizarPiscina();
+  atualizarDecisao();
   mostrarPergunta();
+
+  // Atualiza o tamanho dos gráficos ao redimensionar a janela.
+  let temporizadorRedesenho;
+
+  window.addEventListener("resize", () => {
+    clearTimeout(temporizadorRedesenho);
+
+    temporizadorRedesenho = setTimeout(() => {
+      desenharGraficoCorpoNegro();
+      desenharGraficoSolar();
+    }, 120);
+  });
+
+  desenharGraficoCorpoNegro();
+  desenharGraficoSolar();
 });
