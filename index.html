@@ -1,572 +1,338 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090e2c">
-  <meta name="description" content="AquaLuz Lab: um laboratório interativo sobre energia solar, ondas eletromagnéticas, física térmica e robótica aplicada a piscinas.">
+  <meta name="theme-color" content="#111735">
   <title>AquaLuz Lab | Ciência em movimento</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
 </head>
-
 <body>
-  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-  <header class="topo">
-    <a class="marca" href="#inicio" aria-label="AquaLuz Lab, início">
-      <span class="marca-icone">◈</span>
-      <span>AquaLuz<span class="marca-clara">.lab</span></span>
-    </a>
+  <a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
-    <button id="menuToggle" class="menu-toggle"
-      aria-expanded="false" aria-controls="menu">
+  <header class="topo" id="inicio">
+    <a class="marca" href="#inicio">✦ AquaLuz <strong>Lab</strong></a>
+
+    <button class="menu-botao" id="menuBotao"
+      aria-expanded="false" aria-controls="menuNavegacao">
       ☰ Menu
     </button>
 
-    <nav id="menu" aria-label="Navegação principal">
-      <a href="#ondas">Ondas</a>
-      <a href="#termica">Física térmica</a>
-      <a href="#fotovoltaica">Energia solar</a>
-      <a href="#robotica">Robótica</a>
+    <nav class="menu" id="menuNavegacao">
+      <a href="#ciencia">Ciência</a>
+      <a href="#simulador">Simulador</a>
+      <a href="#graficos">Gráficos</a>
+      <a href="#sensores">Robótica</a>
+      <a href="#quiz">Desafio</a>
     </nav>
   </header>
 
-  <div class="acessibilidade" aria-label="Opções de acessibilidade">
-    <span class="acessibilidade-titulo">Acessibilidade</span>
-    <button id="contraste" type="button" aria-pressed="false">
-      ◐ Alto contraste
-    </button>
-    <button id="fonte" type="button" aria-pressed="false">
-      Aa Fonte de leitura
-    </button>
-    <button id="diminuir" type="button" aria-label="Diminuir texto">A−</button>
-    <button id="aumentar" type="button" aria-label="Aumentar texto">A+</button>
-  </div>
-
   <main id="conteudo">
-    <!-- ABERTURA -->
-    <section class="hero" id="inicio">
-      <div class="hero-grid"></div>
 
+    <section class="hero">
       <div class="hero-texto">
-        <span class="etiqueta"><span class="ponto"></span> FÍSICA · TECNOLOGIA · ROBÓTICA</span>
-
-        <h1>A ciência que transforma o <span class="gradiente">Sol em energia.</span></h1>
-
+        <span class="etiqueta">✦ LABORATÓRIO INTERATIVO</span>
+        <h1>Ciência que ilumina.<br>
+          <span>Energia que transforma.</span>
+        </h1>
         <p>
-          O que a luz tem a ver com a temperatura da água?
-          Como um sensor entende o ambiente? Explore a ciência por trás
-          de uma piscina inteligente.
+          Descubra como a luz se transforma em energia, como os sensores
+          interpretam o ambiente e como a tecnologia pode tornar uma
+          piscina mais eficiente.
         </p>
 
         <div class="hero-acoes">
-          <a class="botao botao-principal" href="#ondas">
-            Explorar laboratório <span aria-hidden="true">↗</span>
-          </a>
-          <a class="botao botao-secundario" href="#robotica">
-            Conhecer os sensores
-          </a>
+          <a class="botao primario" href="#simulador">Explorar o laboratório ↘</a>
+          <a class="botao secundario" href="#ciencia">Conhecer a ciência</a>
         </div>
 
-        <div class="hero-dados">
-          <div><strong>03</strong><span>áreas da ciência</span></div>
-          <div><strong>04</strong><span>experiências interativas</span></div>
-          <div><strong>100%</strong><span>exploração digital</span></div>
+        <div class="hero-notas">
+          <span><b>03</b> temas científicos</span>
+          <span><b>01</b> simulador interativo</span>
+          <span><b>∞</b> descobertas</span>
         </div>
       </div>
 
-      <div class="hero-ilustracao" role="img"
-        aria-label="Ilustração vetorial de uma piscina azul iluminada pelo Sol, painéis solares e sensores tecnológicos.">
-        <div class="orbita orbita-1"></div>
-        <div class="orbita orbita-2"></div>
-        <div class="sol-ilustrado"><span>✦</span></div>
-
-        <div class="etiqueta-flutuante etiqueta-sol">
-          <span class="mini-icone">☀</span>
-          <span><strong>Energia solar</strong><small>luz incidente</small></span>
-        </div>
-
-        <div class="painel-solar" aria-hidden="true">
-          <div class="painel-celulas"></div>
-          <div class="painel-base"></div>
-        </div>
-
-        <div class="piscina-ilustrada">
-          <div class="agua-linha linha-1"></div>
-          <div class="agua-linha linha-2"></div>
-          <div class="agua-linha linha-3"></div>
-          <div class="reflexo-agua"></div>
-          <div class="robo">
-            <span>◈</span>
-          </div>
-        </div>
-
-        <div class="etiqueta-flutuante etiqueta-sensor">
-          <span class="mini-icone ciano">⌁</span>
-          <span><strong>Sensores ativos</strong><small>monitoramento virtual</small></span>
-        </div>
-
-        <div class="estrela estrela-1">✦</div>
-        <div class="estrela estrela-2">✧</div>
+      <div class="hero-arte" aria-label="Ilustração de luz e ondas">
+        <div class="orb"></div>
+        <div class="anel anel1"></div>
+        <div class="anel anel2"></div>
+        <div class="anel anel3"></div>
+        <div class="cartao-flutuante luz">☀️ <span>Luz solar<small>Energia de entrada</small></span></div>
+        <div class="cartao-flutuante agua">💧 <span>Água aquecida<small>Energia térmica</small></span></div>
       </div>
     </section>
 
     <section class="faixa">
-      <span>01 / OBSERVAR</span>
-      <span class="faixa-linha"></span>
-      <span>02 / EXPERIMENTAR</span>
-      <span class="faixa-linha"></span>
-      <span>03 / DESCOBRIR</span>
+      <div><b>01</b><span>Radiação<small>Energia se propagando</small></span></div>
+      <div><b>02</b><span>Efeito fotoelétrico<small>Luz e eletricidade</small></span></div>
+      <div><b>03</b><span>Robótica<small>Sensores e decisões</small></span></div>
     </section>
 
-    <!-- ONDAS -->
-    <section class="secao" id="ondas">
-      <div class="cabecalho-secao">
-        <span class="etiqueta">01 / TECNOCIÊNCIA</span>
-        <h2>O universo das <span class="gradiente">ondas.</span></h2>
-        <p>
-          A energia pode viajar pelo espaço na forma de ondas eletromagnéticas.
-          Escolha uma faixa e descubra suas características e aplicações.
-        </p>
-      </div>
-
-      <div class="grade grade-ondas">
-        <article class="cartao cartao-espectro">
-          <div class="cartao-topo">
-            <span class="icone-cartao roxo">〰</span>
-            <span class="micro-etiqueta">ESPECTRO EM FOCO</span>
-          </div>
-
-          <div class="espectro" aria-label="Representação ilustrativa das faixas do espectro eletromagnético">
-            <span class="faixa-radio">Rádio</span>
-            <span class="faixa-micro">Micro</span>
-            <span class="faixa-infra">Infra</span>
-            <span class="faixa-visivel">Visível</span>
-            <span class="faixa-uv">UV</span>
-            <span class="faixa-raios">Raios X</span>
-            <span class="faixa-gama">Gama</span>
-          </div>
-
-          <div class="legenda-espectro">
-            <span>← Comprimento de onda maior</span>
-            <span>Frequência maior →</span>
-          </div>
-
-          <label for="onda">Escolha uma onda:</label>
-          <select id="onda">
-            <option value="radio">Ondas de rádio</option>
-            <option value="micro">Micro-ondas</option>
-            <option value="infravermelho" selected>Infravermelho</option>
-            <option value="visivel">Luz visível</option>
-            <option value="ultravioleta">Ultravioleta</option>
-            <option value="raiosx">Raios X</option>
-            <option value="gama">Raios gama</option>
-          </select>
-
-          <div class="onda-animada" aria-hidden="true">
-            <div id="ondaVisual"></div>
-          </div>
-
-          <p class="micro-etiqueta">FAIXA SELECIONADA</p>
-          <h3 id="ondaTitulo">Infravermelho</h3>
-          <p id="ondaTexto" aria-live="polite">
-            A piscina emite radiação infravermelha ao perder calor.
-          </p>
-
-          <div class="dado-cientifico">
-            <span>✦</span>
-            <p id="ondaDado">A radiação térmica está relacionada à temperatura dos corpos.</p>
-          </div>
-        </article>
-
-        <article class="cartao cartao-conceito">
-          <span class="etiqueta">ENTENDA A CIÊNCIA</span>
-          <h3>O que todas elas têm em comum?</h3>
-          <p>
-            Ondas eletromagnéticas são oscilações dos campos elétrico e
-            magnético. No vácuo, todas se propagam à velocidade da luz.
-          </p>
-
-          <div class="formula">
-            <span>c = λ · f</span>
-            <small>velocidade = comprimento de onda × frequência</small>
-          </div>
-
-          <div class="conceito-item">
-            <span class="conceito-numero">01</span>
-            <div>
-              <strong>Comprimento de onda</strong>
-              <p>Distância entre dois pontos equivalentes consecutivos da onda.</p>
-            </div>
-          </div>
-
-          <div class="conceito-item">
-            <span class="conceito-numero">02</span>
-            <div>
-              <strong>Frequência</strong>
-              <p>Número de oscilações por segundo, medido em hertz (Hz).</p>
-            </div>
-          </div>
-
-          <div class="conceito-item">
-            <span class="conceito-numero">03</span>
-            <div>
-              <strong>Energia do fóton</strong>
-              <p>Quanto maior a frequência, maior a energia de cada fóton.</p>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <!-- FÍSICA TÉRMICA -->
-    <section class="secao secao-colorida" id="termica">
-      <div class="cabecalho-secao">
-        <span class="etiqueta">02 / LABORATÓRIO TÉRMICO</span>
-        <h2>O Sol aquece. <span class="gradiente">A piscina perde calor.</span></h2>
-        <p>
-          Ajuste a luz, a absorção solar e a cobertura para explorar
-          como essas condições influenciam um modelo simplificado.
-        </p>
-      </div>
-
-      <div class="grade grade-simulador">
-        <article class="cartao">
-          <div class="cartao-topo">
-            <span class="icone-cartao laranja">☼</span>
-            <span class="micro-etiqueta">PAINEL DE CONTROLE</span>
-          </div>
-
-          <div class="controle">
-            <div class="controle-titulo">
-              <label for="sol">Intensidade solar</label>
-              <output id="solValor" for="sol">75%</output>
-            </div>
-            <input id="sol" type="range" min="0" max="100" value="75">
-            <div class="extremos"><span>Baixa</span><span>Alta</span></div>
-          </div>
-
-          <div class="controle">
-            <div class="controle-titulo">
-              <label for="absorcao">Absorção do coletor</label>
-              <output id="absValor" for="absorcao">85%</output>
-            </div>
-            <input id="absorcao" type="range" min="0" max="100" value="85">
-            <div class="extremos"><span>Menor absorção</span><span>Maior absorção</span></div>
-          </div>
-
-          <div class="controle">
-            <label for="capa">Proteção da piscina</label>
-            <select id="capa">
-              <option value="sem">Sem capa térmica</option>
-              <option value="com">Com capa térmica</option>
-            </select>
-          </div>
-
-          <button id="calcular" class="botao botao-principal botao-largo" type="button">
-            Atualizar simulação ↗
-          </button>
-        </article>
-
-        <article class="cartao cartao-resultado">
-          <div class="cartao-topo">
-            <span class="micro-etiqueta">RESULTADO DO MODELO</span>
-            <span class="status"><span class="ponto"></span> Simulação ativa</span>
-          </div>
-
-          <div class="temperatura-resultado">
-            <div class="termometro">♨</div>
-            <div>
-              <span class="micro-etiqueta">ÍNDICE DE AQUECIMENTO</span>
-              <div class="numero-grande"><span id="temperatura">64</span><small>%</small></div>
-            </div>
-          </div>
-
-          <div class="trilho">
-            <div id="barraCalor" class="preenchimento preenchimento-calor" style="width:64%"></div>
-          </div>
-
-          <p id="resultadoCalor" class="mensagem-resultado" aria-live="polite">
-            A energia solar absorvida pode aquecer a água, enquanto parte do calor é perdida para o ambiente.
-          </p>
-
-          <div class="mini-grafico" aria-label="Ilustração conceitual da energia recebida e do calor retido">
-            <div class="grafico-coluna">
-              <div id="barraEntrada" class="coluna coluna-entrada" style="height:75%"></div>
-              <span>Energia recebida</span>
-            </div>
-            <div class="grafico-coluna">
-              <div id="barraRetida" class="coluna coluna-retida" style="height:64%"></div>
-              <span>Índice do modelo</span>
-            </div>
-            <div class="grafico-coluna">
-              <div id="barraPerda" class="coluna coluna-perda" style="height:36%"></div>
-              <span>Perdas ilustrativas</span>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <aside class="explicacao">
-        <span class="icone-cartao roxo">✧</span>
+    <section class="secao" id="ciencia">
+      <div class="cabecalho">
         <div>
-          <h3>O que é radiação de corpo negro?</h3>
+          <span class="sobretitulo">A BASE CIENTÍFICA</span>
+          <h2>Três ideias, um mundo de aplicações.</h2>
+        </div>
+        <p>Conheça os conceitos que estão por trás das tecnologias estudadas neste projeto.</p>
+      </div>
+
+      <div class="cartoes">
+        <article class="card-ciencia">
+          <div class="icone violeta">〰</div>
+          <span class="numero-card">01 / RADIAÇÃO</span>
+          <h3>Radiação do corpo negro</h3>
           <p>
-            Um corpo negro ideal absorve toda a radiação incidente e emite
-            radiação de acordo com sua temperatura. Quanto maior a temperatura,
-            maior a energia emitida por unidade de área e menor o comprimento
-            de onda de pico. Uma piscina real não é um corpo negro perfeito,
-            mas o conceito ajuda a entender a troca de energia por radiação.
+            Todo corpo com temperatura acima do zero absoluto emite
+            radiação. Quando a temperatura aumenta, a energia emitida
+            também muda de distribuição.
           </p>
-          <p class="nota">
-            Este simulador é conceitual: o índice apresentado não é uma
-            temperatura real em °C nem uma previsão de aquecimento da piscina.
+          <div class="mini-grafico"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="destaque">Mais temperatura → pico em menor comprimento de onda.</p>
+        </article>
+
+        <article class="card-ciencia">
+          <div class="icone azul">☼</div>
+          <span class="numero-card">02 / LUZ + ELETRICIDADE</span>
+          <h3>Efeito fotoelétrico</h3>
+          <p>
+            Fótons com frequência suficiente podem transferir energia
+            aos elétrons de um material, fazendo com que sejam liberados.
+          </p>
+          <div class="fluxo"><span>Fótons</span> → <span>Material</span> → <span>Elétrons</span></div>
+          <p class="destaque">A energia de cada fóton depende da frequência da luz.</p>
+        </article>
+
+        <article class="card-ciencia">
+          <div class="icone ciano">⌁</div>
+          <span class="numero-card">03 / AUTOMAÇÃO</span>
+          <h3>Sensores e robótica</h3>
+          <p>
+            Sensores medem condições do ambiente. Um controlador interpreta
+            os dados e pode executar ações conforme regras programadas.
+          </p>
+          <div class="fluxo"><span>Sensor</span> → <span>Controle</span> → <span>Ação</span></div>
+          <p class="destaque">Medir → interpretar → agir.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="secao simulador-secao" id="simulador">
+      <div class="cabecalho">
+        <div>
+          <span class="sobretitulo">MÃO NA MASSA</span>
+          <h2>Uma piscina inteligente.</h2>
+        </div>
+        <p>Altere os controles e observe como as condições influenciam o cenário simulado.</p>
+      </div>
+
+      <div class="simulador-grid">
+        <div class="painel">
+          <h3>⚙️ Painel de controle</h3>
+          <p class="subtexto">Mude os valores abaixo.</p>
+
+          <div class="controle">
+            <label for="sol">Intensidade solar <output id="solValor">70%</output></label>
+            <input id="sol" type="range" min="0" max="100" value="70">
+            <div class="limites"><span>Baixa</span><span>Alta</span></div>
+          </div>
+
+          <div class="controle">
+            <label for="cobertura">Cobertura térmica <output id="coberturaValor">Ligada</output></label>
+            <input id="cobertura" type="range" min="0" max="1" value="1">
+            <div class="limites"><span>Retirada</span><span>Colocada</span></div>
+          </div>
+
+          <div class="controle">
+            <label for="aquecimento">Aquecimento auxiliar <output id="aquecimentoValor">Desligado</output></label>
+            <input id="aquecimento" type="range" min="0" max="1" value="0">
+            <div class="limites"><span>Desligado</span><span>Ligado</span></div>
+          </div>
+
+          <p class="aviso">ⓘ Simulação educativa simplificada, não uma previsão real de temperatura.</p>
+        </div>
+
+        <div class="painel">
+          <span class="sobretitulo">CENÁRIO SIMULADO</span>
+          <h3>Condições da piscina</h3>
+
+          <div class="piscina" id="piscinaIlustracao">
+            <span class="sol-visual">☀</span>
+            <div class="agua-piscina">
+              <div class="onda"></div>
+              <div class="onda onda2"></div>
+            </div>
+            <div class="termometro">
+              <span>🌡️</span>
+              <strong id="tempEstimativa">27 °C</strong>
+              <small>estimativa</small>
+            </div>
+          </div>
+
+          <div class="metricas">
+            <div>
+              <span>Ganho solar relativo</span>
+              <strong id="ganhoSolar">70%</strong>
+              <div class="barra"><i id="barraSolar"></i></div>
+            </div>
+            <div>
+              <span>Perda de calor relativa</span>
+              <strong id="perdaCalor">21%</strong>
+              <div class="barra"><i id="barraPerda"></i></div>
+            </div>
+            <div>
+              <span>Consumo auxiliar</span>
+              <strong id="consumo">Baixo</strong>
+              <div class="barra"><i id="barraConsumo"></i></div>
+            </div>
+          </div>
+
+          <p class="mensagem" id="mensagemSimulacao" aria-live="polite">
+            A cobertura ajuda a reduzir a perda de calor.
           </p>
         </div>
-      </aside>
+      </div>
     </section>
 
-    <!-- EFEITO FOTOELÉTRICO -->
-    <section class="secao" id="fotovoltaica">
-      <div class="cabecalho-secao">
-        <span class="etiqueta">03 / EFEITO FOTOELÉTRICO</span>
-        <h2>Luz que vira <span class="gradiente">eletricidade.</span></h2>
-        <p>
-          Explore como a intensidade da luz e a energia dos fótons
-          se relacionam com os fenômenos fotoelétricos.
-        </p>
-      </div>
-
-      <div class="grade grade-simulador">
-        <article class="cartao">
-          <div class="controle">
-            <div class="controle-titulo">
-              <label for="luz">Intensidade da luz</label>
-              <output id="luzValor" for="luz">70%</output>
-            </div>
-            <input id="luz" type="range" min="0" max="100" value="70">
-            <div class="extremos"><span>Menos fótons</span><span>Mais fótons</span></div>
-          </div>
-
-          <div class="controle">
-            <div class="controle-titulo">
-              <label for="fotons">Energia dos fótons</label>
-              <output id="fotonsValor" for="fotons">3,0 eV</output>
-            </div>
-            <input id="fotons" type="range" min="1" max="6" step="0.5" value="3">
-            <div class="extremos"><span>Energia menor</span><span>Energia maior</span></div>
-          </div>
-
-          <div class="formula">
-            <span>E = h · f</span>
-            <small>energia do fóton = constante de Planck × frequência</small>
-          </div>
-
-          <div class="dado-cientifico">
-            <span>✦</span>
-            <p id="explicacaoPV" aria-live="polite">
-              A energia de cada fóton depende da sua frequência.
-            </p>
-          </div>
-        </article>
-
-        <article class="cartao cartao-energia">
-          <span class="micro-etiqueta">FLUXO DE ENERGIA</span>
-
-          <div class="painel-energia" aria-hidden="true">
-            <div class="sol-energia">☀</div>
-            <div class="raios-energia"><span></span><span></span><span></span><span></span></div>
-            <div class="placa-energia">
-              <span>▦</span><span>▦</span><span>▦</span>
-              <span>▦</span><span>▦</span><span>▦</span>
-            </div>
-            <div class="raio-eletrico">ϟ</div>
-          </div>
-
-          <h3 id="estadoFoton">Fótons em movimento</h3>
-          <p id="geracao" aria-live="polite">Intensidade da luz: 70% · Energia por fóton: 3,0 eV</p>
-
-          <div class="barra-info">
-            <div class="controle-titulo">
-              <span>Intensidade relativa</span>
-              <strong id="intensidadeVisual">70%</strong>
-            </div>
-            <div class="trilho">
-              <div id="barraLuz" class="preenchimento preenchimento-luz" style="width:70%"></div>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <aside class="explicacao">
-        <span class="icone-cartao ciano">ϟ</span>
+    <section class="secao" id="graficos">
+      <div class="cabecalho">
         <div>
-          <h3>O que acontece no efeito fotoelétrico?</h3>
-          <p>
-            Quando a luz incide em certos materiais, os fótons podem transferir
-            energia aos elétrons. Para ocorrer emissão, a energia de cada fóton
-            precisa superar um valor mínimo próprio do material.
-          </p>
-          <p>
-            Painéis fotovoltaicos transformam luz em eletricidade por meio
-            do efeito fotovoltaico, relacionado à interação entre luz e matéria,
-            mas diferente da emissão de elétrons para fora de um material.
-          </p>
-          <p class="nota">
-            A simulação é conceitual e não calcula a produção real de um painel.
-          </p>
+          <span class="sobretitulo">VEJA A RELAÇÃO</span>
+          <h2>Os dados contam uma história.</h2>
         </div>
-      </aside>
-    </section>
-
-    <!-- ROBÓTICA -->
-    <section class="secao secao-colorida" id="robotica">
-      <div class="cabecalho-secao">
-        <span class="etiqueta">04 / ROBÓTICA APLICADA</span>
-        <h2>Uma piscina <span class="gradiente">inteligente.</span></h2>
-        <p>
-          Altere os sensores virtuais e veja como um controlador
-          poderia interpretar os dados e sugerir ações.
-        </p>
+        <p>Observe os gráficos e experimente mudar a intensidade solar no simulador.</p>
       </div>
 
-      <div class="grade grade-simulador">
-        <article class="cartao">
-          <div class="cartao-topo">
-            <span class="icone-cartao ciano">⌁</span>
-            <span class="micro-etiqueta">SENSORES VIRTUAIS</span>
+      <div class="graficos-grid">
+        <article class="painel grafico-card">
+          <span class="numero-card">GRÁFICO 01</span>
+          <h3>Temperatura × emissão</h3>
+          <p>Curvas ilustrativas da radiação de um corpo negro.</p>
+          <div class="legenda">
+            <span><i class="ponto-roxo"></i> Temperatura menor</span>
+            <span><i class="ponto-ciano"></i> Temperatura maior</span>
           </div>
+          <canvas id="graficoCorpoNegro" role="img"
+            aria-label="Gráfico ilustrativo das curvas de radiação de um corpo negro.">
+            Gráfico de radiação de corpo negro.
+          </canvas>
+          <div class="eixos"><span>Menor comprimento de onda</span><span>Maior comprimento de onda</span></div>
+          <small>Curvas demonstrativas, sem escala experimental.</small>
+        </article>
+
+        <article class="painel grafico-card">
+          <span class="numero-card">GRÁFICO 02</span>
+          <h3>Luz solar × ganho relativo</h3>
+          <p>O gráfico acompanha a intensidade solar selecionada.</p>
+          <div class="legenda"><span><i class="ponto-ciano"></i> Ganho solar estimado</span></div>
+          <canvas id="graficoSolar" role="img"
+            aria-label="Gráfico de barras do ganho solar relativo.">
+            Gráfico de ganho solar.
+          </canvas>
+          <div class="eixos"><span>Intensidade solar</span><span>0–100%</span></div>
+          <small>Indicador proporcional para fins didáticos.</small>
+        </article>
+      </div>
+    </section>
+
+    <section class="secao" id="sensores">
+      <div class="cabecalho">
+        <div>
+          <span class="sobretitulo">ROBÓTICA NA PRÁTICA</span>
+          <h2>O controlador está pensando.</h2>
+        </div>
+        <p>Altere os sensores virtuais e acompanhe a resposta automática do sistema.</p>
+      </div>
+
+      <div class="sensores-grid">
+        <div class="painel">
+          <h3>⌁ Sensores virtuais</h3>
+          <p class="subtexto">Valores medidos pelo sistema.</p>
 
           <div class="controle">
-            <div class="controle-titulo">
-              <label for="temperaturaSensor">Temperatura da água</label>
-              <output id="tempSensorValor" for="temperaturaSensor">28 °C</output>
-            </div>
+            <label for="temperaturaSensor">Temperatura da água <output id="tempSensorValor">28 °C</output></label>
             <input id="temperaturaSensor" type="range" min="0" max="40" value="28">
-            <div class="extremos"><span>0 °C</span><span>40 °C</span></div>
+            <div class="limites"><span>0 °C</span><span>40 °C</span></div>
           </div>
 
           <div class="controle">
-            <div class="controle-titulo">
-              <label for="luzSensor">Luminosidade</label>
-              <output id="luzSensorValor" for="luzSensor">70%</output>
-            </div>
+            <label for="luzSensor">Luminosidade <output id="luzSensorValor">70%</output></label>
             <input id="luzSensor" type="range" min="0" max="100" value="70">
-            <div class="extremos"><span>Escuro</span><span>Claro</span></div>
+            <div class="limites"><span>Baixa</span><span>Alta</span></div>
           </div>
 
           <div class="controle">
-            <div class="controle-titulo">
-              <label for="nivelSensor">Nível da água</label>
-              <output id="nivelSensorValor" for="nivelSensor">80%</output>
-            </div>
+            <label for="nivelSensor">Nível da água <output id="nivelSensorValor">80%</output></label>
             <input id="nivelSensor" type="range" min="0" max="100" value="80">
-            <div class="extremos"><span>Baixo</span><span>Alto</span></div>
+            <div class="limites"><span>Baixo</span><span>Alto</span></div>
           </div>
-        </article>
-
-        <article class="cartao cartao-controlador">
-          <div class="cartao-topo">
-            <span class="micro-etiqueta">CENTRAL DE AUTOMAÇÃO</span>
-            <span class="status"><span class="ponto"></span> Online</span>
-          </div>
-
-          <div class="sensor-linha">
-            <span class="sensor-icone">♨</span>
-            <div><strong>Sensor de temperatura</strong><small>Leitura térmica</small></div>
-            <span class="sensor-indicador"></span>
-          </div>
-
-          <div class="sensor-linha">
-            <span class="sensor-icone">☼</span>
-            <div><strong>Sensor de luminosidade</strong><small>Intensidade luminosa</small></div>
-            <span class="sensor-indicador"></span>
-          </div>
-
-          <div class="sensor-linha">
-            <span class="sensor-icone">◉</span>
-            <div><strong>Sensor de nível</strong><small>Altura da água</small></div>
-            <span class="sensor-indicador"></span>
-          </div>
-
-          <div class="decisao">
-            <span class="micro-etiqueta">DECISÃO DO CONTROLADOR</span>
-            <p id="decisao" aria-live="polite">
-              Sistema em monitoramento.
-            </p>
-          </div>
-        </article>
-      </div>
-
-      <aside class="explicacao">
-        <span class="icone-cartao roxo">⌘</span>
-        <div>
-          <h3>Como funcionaria na prática?</h3>
-          <p>
-            Um sensor mede uma grandeza física. Um microcontrolador processa
-            os dados e pode acionar dispositivos, como bombas ou válvulas,
-            por meio de circuitos apropriados.
-          </p>
-          <p class="nota">
-            Este site demonstra a lógica por simulação: não está conectado
-            a sensores, bombas ou equipamentos reais.
-          </p>
         </div>
-      </aside>
-    </section>
 
-    <!-- ACESSIBILIDADE E REFERÊNCIAS -->
-    <section class="secao" id="acessibilidade">
-      <div class="cabecalho-secao">
-        <span class="etiqueta">CIÊNCIA PARA TODAS AS PESSOAS</span>
-        <h2>Conhecimento sem <span class="gradiente">barreiras.</span></h2>
-        <p>
-          O conteúdo pode ser navegado pelo teclado, tem controles identificados
-          e oferece opções de contraste e leitura.
-        </p>
-      </div>
-
-      <div class="grade grade-acessibilidade">
-        <article class="cartao">
-          <span class="icone-cartao roxo">Aa</span>
-          <h3>Leitura confortável</h3>
-          <p>Use os controles no topo para ajustar o tamanho do texto e ativar uma fonte alternativa de leitura.</p>
-        </article>
-
-        <article class="cartao">
-          <span class="icone-cartao ciano">⌨</span>
-          <h3>Navegação por teclado</h3>
-          <p>Use Tab para avançar, Shift + Tab para voltar, Enter para ativar links e Espaço para operar controles compatíveis.</p>
-        </article>
-
-        <article class="cartao">
-          <span class="icone-cartao rosa">◎</span>
-          <h3>Libras e outros formatos</h3>
-          <p>Para completar a acessibilidade, adicione um vídeo em Libras com tradução dos conteúdos principais e legendas nos materiais audiovisuais.</p>
-        </article>
-      </div>
-
-      <div class="referencias">
-        <span class="etiqueta">PARA CONTINUAR ESTUDANDO</span>
-        <h3>Fontes de consulta</h3>
-        <ul>
-          <li><a href="https://www.nasa.gov/" target="_blank" rel="noopener noreferrer">NASA — ciência e espaço</a></li>
-          <li><a href="https://phet.colorado.edu/pt_BR/" target="_blank" rel="noopener noreferrer">PhET — simulações interativas</a></li>
-          <li><a href="https://www.gov.br/inmetro/pt-br" target="_blank" rel="noopener noreferrer">Inmetro — ciência e tecnologia</a></li>
-        </ul>
+        <div class="painel decisao">
+          <div class="icone ciano">⌘</div>
+          <span class="sobretitulo">RESPOSTA DO SISTEMA</span>
+          <h3 id="tituloDecisao">Tudo dentro da faixa demonstrativa</h3>
+          <p id="decisao" aria-live="polite">
+            Sensores monitorados. As condições estão dentro das faixas demonstrativas.
+          </p>
+          <div class="status"><i id="statusDecisao"></i><span id="statusTexto">Monitoramento ativo</span></div>
+          <div class="log"><span>›</span><p id="logSistema">Leituras recebidas. Avaliando condições...</p></div>
+        </div>
       </div>
     </section>
+
+    <section class="secao desafio-secao" id="quiz">
+      <div>
+        <span class="sobretitulo">TESTE SEU CONHECIMENTO</span>
+        <h2>Desafio AquaLuz</h2>
+        <p class="subtexto">Responda a três perguntas para revisar o que aprendeu.</p>
+      </div>
+
+      <div class="painel quiz-card">
+        <div class="quiz-progresso">
+          <span id="quizContador">PERGUNTA 1 DE 3</span>
+          <div><i id="quizBarra"></i></div>
+        </div>
+        <h3 id="quizPergunta">O que acontece quando a intensidade da luz solar aumenta?</h3>
+        <div class="opcoes-quiz" id="opcoesQuiz"></div>
+        <p id="feedbackQuiz" class="feedback" aria-live="polite">Escolha uma resposta.</p>
+        <button class="botao primario" id="quizProximo" disabled>Próxima pergunta →</button>
+      </div>
+    </section>
+
+    <section class="cta-final">
+      <div>
+        <span class="sobretitulo">CIÊNCIA EM TODO LUGAR</span>
+        <h2>Observar. Testar. Descobrir.</h2>
+        <p>Pequenas mudanças podem revelar grandes ideias. A curiosidade é o primeiro passo.</p>
+      </div>
+      <a class="botao claro" href="#inicio">Voltar ao topo ↑</a>
+    </section>
+
   </main>
 
   <footer class="rodape">
-    <a class="marca" href="#inicio">
-      <span class="marca-icone">◈</span>
-      <span>AquaLuz<span class="marca-clara">.lab</span></span>
-    </a>
-    <p>Um projeto educacional que conecta física, tecnologia e robótica.</p>
-    <p class="nota">Simulações didáticas · <span id="anoAtual">2026</span></p>
+    <a class="marca" href="#inicio">✦ AquaLuz <strong>Lab</strong></a>
+    <p>Projeto educativo • Ciência, energia e tecnologia</p>
+    <a href="#conteudo">Voltar ao conteúdo ↑</a>
   </footer>
+
+  <!-- Acessibilidade em Libras: widget oficial VLibras -->
+  <div vw class="enabled">
+    <div vw-access-button class="active"></div>
+    <div vw-plugin-wrapper>
+      <div class="vw-plugin-top-wrapper"></div>
+    </div>
+  </div>
+  <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+  <script>
+    if (window.VLibras) {
+      new window.VLibras.Widget("https://vlibras.gov.br/app");
+    }
+  </script>
+
+  <script src="script.js"></script>
 </body>
 </html>
