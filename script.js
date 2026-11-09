@@ -1,449 +1,548 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Utilitários: buscar elementos sem interromper o restante do site.
-  const $ = (id) => document.getElementById(id);
-  const setText = (id, value) => {
-    const el = $(id);
-    if (el) el.textContent = value;
-  };
-  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  // FUNÇÕES AUXILIARES
+  const byId = (id) => document.getElementById(id);
+  const numberBR = (value, decimals = 1) =>
+    Number(value).toFixed(decimals).replace(".", ",");
 
-  // =========================================================
-  // 1. GRÁFICO DE RADIAÇÃO DE CORPO NEGRO
-  // =========================================================
-  const canvasCorpo = $("graficoCorpoNegro");
-  const ctxCorpo = canvasCorpo ? canvasCorpo.getContext("2d") : null;
-  const controleTemperatura = $("temperaturaCorpo");
+  // 1. RADIAÇÃO DE CORPO NEGRO
+  function iniciarCorpoNegro() {
+    const canvas = byId("graficoCorpoNegro");
+    const slider = byId("temperaturaCorpo");
+    const valor = byId("temperaturaCorpoValor");
+    const kelvin = byId("tempKelvin");
+    const pico = byId("picoWien");
+    const explicacao = byId("explicacaoCorpo");
 
-  function desenharGraficoCorpo() {
-    if (!canvasCorpo || !ctxCorpo || !controleTemperatura) return;
+    if (!canvas || !slider) return;
 
-    const cssWidth = Math.max(280, canvasCorpo.getBoundingClientRect().width);
-    const cssHeight = Math.max(180, canvasCorpo.getBoundingClientRect().height);
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    canvasCorpo.width = Math.round(cssWidth * dpr);
-    canvasCorpo.height = Math.round(cssHeight * dpr);
-    ctxCorpo.setTransform(dpr, 0, 0, dpr, 0, 0);
+    function desenhar() {
+      const temperatura = Number(slider.value);
+      const largura = canvas.width;
+      const altura = canvas.height;
+      const margem = { left: 65, right: 20, top: 20, bottom: 48 };
+      const graficoW = largura - margem.left - margem.right;
+      const graficoH = altura - margem.top - margem.bottom;
 
-    const w = cssWidth;
-    const h = cssHeight;
-    const left = 45, right = 12, top = 18, bottom = 35;
-    const plotW = w - left - right;
-    const plotH = h - top - bottom;
-    const T = Number(controleTemperatura.value);
-    const peak = 2.898e6 / T;
+      ctx.clearRect(0, 0, largura, altura);
+      ctx.fillStyle = "#fbfcff";
+      ctx.fillRect(0, 0, largura, altura);
 
-    setText("temperaturaCorpoValor", `${T.toLocaleString("pt-BR")} K`);
-    setText("tempKelvin", `${T.toLocaleString("pt-BR")} K`);
-    setText("picoWien", `${Math.round(peak)} nm`);
+      // Grade e eixos
+      ctx.strokeStyle = "#e7eaf4";
+      ctx.lineWidth = 1;
+      ctx.font = "17px DM Sans, sans-serif";
+      ctx.fillStyle = "#78829d";
 
-    ctxCorpo.clearRect(0, 0, w, h);
-    ctxCorpo.fillStyle = "#ffffff";
-    ctxCorpo.fillRect(0, 0, w, h);
-
-    // Grade e eixos.
-    ctxCorpo.strokeStyle = "#ececf5";
-    ctxCorpo.lineWidth = 1;
-    ctxCorpo.font = "9px DM Sans, sans-serif";
-    ctxCorpo.fillStyle = "#9299b0";
-    for (let i = 0; i <= 4; i++) {
-      const y = top + plotH * i / 4;
-      ctxCorpo.beginPath();
-      ctxCorpo.moveTo(left, y);
-      ctxCorpo.lineTo(w - right, y);
-      ctxCorpo.stroke();
-    }
-    for (let nm = 400; nm <= 2000; nm += 400) {
-      const x = left + ((nm - 200) / 1800) * plotW;
-      ctxCorpo.beginPath();
-      ctxCorpo.moveTo(x, top);
-      ctxCorpo.lineTo(x, top + plotH);
-      ctxCorpo.stroke();
-      ctxCorpo.fillText(String(nm), x - 9, h - 14);
-    }
-    ctxCorpo.fillText("Intensidade", 5, 12);
-    ctxCorpo.fillText("Comprimento de onda (nm)", Math.max(5, w / 2 - 65), h - 2);
-
-    // Lei de Planck simplificada, normalizada para cada curva.
-    const planck = (lambdaNm, temp) => {
-      const lambda = lambdaNm * 1e-9;
-      const c2 = 1.4387769e-2;
-      const exponent = c2 / (lambda * temp);
-      if (exponent > 700) return 0;
-      return 1 / (Math.pow(lambda, 5) * (Math.exp(exponent) - 1));
-    };
-
-    const curves = [
-      { temp: 3000, color: "#e9a15f", width: 1.8 },
-      { temp: T, color: "#8268dc", width: 2.8 },
-      { temp: 5500, color: "#e477ac", width: 1.8 }
-    ];
-
-    // Normalização comum aproximada: cada curva é escalada pelo próprio máximo
-    // para facilitar a comparação da posição dos picos.
-    curves.forEach((curve) => {
-      const values = [];
-      let max = 0;
-      for (let i = 0; i <= 180; i++) {
-        const nm = 200 + i * 10;
-        const value = planck(nm, curve.temp);
-        values.push({ nm, value });
-        if (value > max) max = value;
+      for (let i = 0; i <= 4; i++) {
+        const y = margem.top + (graficoH / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(margem.left, y);
+        ctx.lineTo(largura - margem.right, y);
+        ctx.stroke();
       }
-      ctxCorpo.beginPath();
-      values.forEach((point, index) => {
-        const normalized = max ? point.value / max : 0;
-        const x = left + ((point.nm - 200) / 1800) * plotW;
-        const y = top + plotH - normalized * (plotH * 0.88);
-        if (index === 0) ctxCorpo.moveTo(x, y);
-        else ctxCorpo.lineTo(x, y);
+
+      for (let i = 0; i <= 5; i++) {
+        const x = margem.left + (graficoW / 5) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, margem.top);
+        ctx.lineTo(x, altura - margem.bottom);
+        ctx.stroke();
+
+        ctx.textAlign = "center";
+        ctx.fillText(String(i), x, altura - 17);
+      }
+
+      ctx.save();
+      ctx.translate(17, altura / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#68738f";
+      ctx.fillText("Intensidade relativa", 0, 0);
+      ctx.restore();
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#68738f";
+      ctx.fillText("Comprimento de onda (µm)", largura / 2, altura - 2);
+
+      // Lei de Planck: curva normalizada para comparação visual.
+      const c2 = 14387.77; // µm.K
+      const pontos = [];
+      let maximo = 0;
+
+      for (let i = 0; i <= 300; i++) {
+        const lambda = 0.25 + (5.75 * i / 300);
+        const expoente = c2 / (lambda * temperatura);
+        const seguro = Math.min(expoente, 700);
+        const intensidade =
+          1 / (Math.pow(lambda, 5) * (Math.exp(seguro) - 1));
+
+        pontos.push({ lambda, intensidade });
+        if (intensidade > maximo) maximo = intensidade;
+      }
+
+      ctx.beginPath();
+      pontos.forEach((p, i) => {
+        const x = margem.left + ((p.lambda - 0.25) / 5.75) * graficoW;
+        const y = margem.top + graficoH -
+          (p.intensidade / maximo) * graficoH * 0.9;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       });
-      ctxCorpo.strokeStyle = curve.color;
-      ctxCorpo.lineWidth = curve.width;
-      ctxCorpo.stroke();
-    });
 
-    // Marca o pico da temperatura selecionada, se estiver dentro da área.
-    if (peak >= 200 && peak <= 2000) {
-      const x = left + ((peak - 200) / 1800) * plotW;
-      ctxCorpo.setLineDash([4, 4]);
-      ctxCorpo.strokeStyle = "#8268dc";
-      ctxCorpo.beginPath();
-      ctxCorpo.moveTo(x, top);
-      ctxCorpo.lineTo(x, top + plotH);
-      ctxCorpo.stroke();
-      ctxCorpo.setLineDash([]);
+      const gradiente = ctx.createLinearGradient(0, margem.top, 0, altura);
+      gradiente.addColorStop(0, "rgba(125, 91, 221, 0.28)");
+      gradiente.addColorStop(1, "rgba(125, 91, 221, 0.01)");
+
+      ctx.lineTo(largura - margem.right, altura - margem.bottom);
+      ctx.lineTo(margem.left, altura - margem.bottom);
+      ctx.closePath();
+      ctx.fillStyle = gradiente;
+      ctx.fill();
+
+      ctx.beginPath();
+      pontos.forEach((p, i) => {
+        const x = margem.left + ((p.lambda - 0.25) / 5.75) * graficoW;
+        const y = margem.top + graficoH -
+          (p.intensidade / maximo) * graficoH * 0.9;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.strokeStyle = "#8058d9";
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      // Pico de Wien
+      const lambdaPico = 2898 / temperatura;
+      const xPico = margem.left +
+        ((lambdaPico - 0.25) / 5.75) * graficoW;
+
+      ctx.setLineDash([7, 6]);
+      ctx.strokeStyle = "#e68bb8";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(xPico, margem.top);
+      ctx.lineTo(xPico, altura - margem.bottom);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      valor.textContent = `${temperatura} K`;
+      kelvin.textContent = `${temperatura} K`;
+      pico.textContent = `${numberBR(lambdaPico * 1000, 0)} nm`;
+
+      explicacao.textContent =
+        temperatura >= 5500
+          ? "Com essa temperatura, o pico de emissão está em comprimentos de onda menores."
+          : "Com essa temperatura, o pico de emissão está em comprimentos de onda maiores.";
     }
+
+    slider.addEventListener("input", desenhar);
+    desenhar();
   }
 
-  if (controleTemperatura) {
-    controleTemperatura.addEventListener("input", desenharGraficoCorpo);
-  }
-
-  // =========================================================
   // 2. EFEITO FOTOELÉTRICO
-  // =========================================================
-  const frequencia = $("frequenciaFoto");
-  const metal = $("metalFoto");
+  function iniciarFotoeletrico() {
+    const frequencia = byId("frequenciaFoto");
+    const metal = byId("metalFoto");
+    const frequenciaValor = byId("frequenciaFotoValor");
+    const energia = byId("energiaFoton");
+    const trabalho = byId("funcaoTrabalho");
+    const resultado = byId("resultadoFoto");
+    const cena = document.querySelector(".photo-scene");
 
-  function atualizarFotoeletrico() {
     if (!frequencia || !metal) return;
 
-    const f = Number(frequencia.value) * 1e14;
-    const trabalho = Number(metal.value);
+    // Constante de Planck em eV.s
     const h = 4.135667696e-15;
-    const energia = h * f;
-    const libera = energia >= trabalho;
-    const cinetica = Math.max(0, energia - trabalho);
 
-    setText("frequenciaFotoValor", `${(f / 1e14).toFixed(1).replace(".", ",")} × 10¹⁴ Hz`);
-    setText("energiaFoton", `${energia.toFixed(2)} eV`);
-    setText("funcaoTrabalho", `${trabalho.toFixed(2)} eV`);
+    function atualizar() {
+      const f = Number(frequencia.value) * 1e14;
+      const funcao = Number(metal.value);
+      const energiaFoton = h * f;
+      const liberaEletrons = energiaFoton >= funcao;
+      const energiaCinetica = Math.max(0, energiaFoton - funcao);
 
-    const resultado = $("resultadoFoto");
-    if (resultado) {
-      resultado.classList.toggle("warning", !libera);
-      resultado.innerHTML = libera
-        ? `<strong>Elétrons liberados!</strong><span>Energia cinética máxima aproximada: ${cinetica.toFixed(2)} eV.</span>`
-        : `<strong>Não há emissão de elétrons.</strong><span>A energia do fóton é menor que a função trabalho desse material.</span>`;
+      frequenciaValor.textContent =
+        `${numberBR(Number(frequencia.value), 1)} × 10¹⁴ Hz`;
+
+      energia.textContent = `${numberBR(energiaFoton, 2)} eV`;
+      trabalho.textContent = `${numberBR(funcao, 2)} eV`;
+
+      if (liberaEletrons) {
+        resultado.textContent =
+          `Efeito fotoelétrico: elétrons são liberados! Energia cinética máxima estimada: ${numberBR(energiaCinetica, 2)} eV.`;
+        resultado.classList.add("success");
+        cena?.classList.add("emitting");
+      } else {
+        resultado.textContent =
+          "A energia do fóton é menor que a função trabalho. Não há emissão de elétrons.";
+        resultado.classList.remove("success");
+        cena?.classList.remove("emitting");
+      }
     }
 
-    const visual = document.querySelector(".photo-visual");
-    if (visual) visual.classList.toggle("photo-active", libera);
+    frequencia.addEventListener("input", atualizar);
+    metal.addEventListener("change", atualizar);
+    atualizar();
   }
 
-  frequencia?.addEventListener("input", atualizarFotoeletrico);
-  metal?.addEventListener("change", atualizarFotoeletrico);
-
-  // =========================================================
   // 3. SIMULADOR DA PISCINA
-  // =========================================================
-  const solar = $("intensidadeSolar");
-  const cobertura = $("coberturaPiscina");
-  const vento = $("ventoPiscina");
-  const extra = $("aquecimentoExtra");
+  function iniciarPiscina() {
+    const solar = byId("intensidadeSolar");
+    const cobertura = byId("coberturaPiscina");
+    const vento = byId("ventoPiscina");
+    const extra = byId("aquecimentoExtra");
 
-  function atualizarPiscina() {
     if (!solar || !cobertura || !vento || !extra) return;
 
-    const s = Number(solar.value);
-    const c = Number(cobertura.value);
-    const v = Number(vento.value);
-    const a = Number(extra.value);
+    const saidas = {
+      solar: byId("solarValor"),
+      cobertura: byId("coberturaValor"),
+      vento: byId("ventoValor"),
+      extra: byId("extraValor")
+    };
 
-    // Modelo didático relativo, não uma previsão térmica real.
-    const retencao = clamp(Math.round(48 + c * 32 - v * 0.18), 25, 90);
-    const perda = 100 - retencao;
-    const temperatura = clamp(Math.round(20 + s * 0.075 + c * 2.5 - v * 0.035 + a * 3), 10, 40);
+    function atualizar() {
+      const s = Number(solar.value);
+      const c = Number(cobertura.value);
+      const v = Number(vento.value);
+      const a = Number(extra.value);
 
-    setText("solarValor", `${s}%`);
-    setText("coberturaValor", c ? "Ligada" : "Desligada");
-    setText("ventoValor", `${v}%`);
-    setText("extraValor", a ? "Ligado" : "Desligado");
-    setText("temperaturaPiscina", String(temperatura));
-    setText("energiaSolarTexto", `${s}%`);
-    setText("retencaoTexto", `${retencao}%`);
-    setText("perdaTexto", `${perda}%`);
+      saidas.solar.textContent = `${s}%`;
+      saidas.cobertura.textContent = `${c}%`;
+      saidas.vento.textContent = `${v}%`;
+      saidas.extra.textContent = `${a}%`;
 
-    const status = temperatura < 23 ? "Água mais fria" : temperatura < 30 ? "Condição confortável" : "Água aquecida";
-    setText("statusPiscina", status);
+      // Modelo didático: representa uma temperatura estimada.
+      // Não substitui um cálculo térmico de uma piscina real.
+      const temperatura = Math.max(
+        15,
+        Math.min(42, 20 + s * 0.075 + c * 0.025 - v * 0.035 + a * 0.03)
+      );
 
-    const barraSolar = $("barraSolar");
-    const barraRetencao = $("barraRetencao");
-    const barraPerda = $("barraPerda");
-    if (barraSolar) barraSolar.style.width = `${s}%`;
-    if (barraRetencao) barraRetencao.style.width = `${retencao}%`;
-    if (barraPerda) barraPerda.style.width = `${perda}%`;
+      const retencao = Math.min(100, Math.max(0, 35 + c * 0.55 - v * 0.2));
+      const perda = 100 - retencao;
 
-    let explicacao = "";
-    if (s < 25) explicacao = "Com pouca luz solar, o coletor recebe menos energia. A temperatura estimada tende a subir menos.";
-    else if (v > 65 && !c) explicacao = "O vento e a ausência de cobertura favorecem a perda de calor para o ambiente.";
-    else if (c && s >= 50) explicacao = "A boa incidência solar e a cobertura térmica favorecem o aquecimento e a retenção de calor.";
-    else if (a) explicacao = "O aquecimento auxiliar acrescenta energia ao sistema, além da contribuição solar.";
-    else explicacao = "A piscina recebe energia solar, mas continua trocando calor com o ambiente.";
-    setText("explicacaoPiscina", explicacao);
-  }
+      byId("temperaturaPiscina").textContent =
+        `${numberBR(temperatura, 1)} °C`;
 
-  [solar, cobertura, vento, extra].forEach((control) => {
-    control?.addEventListener("input", atualizarPiscina);
-    control?.addEventListener("change", atualizarPiscina);
-  });
+      byId("energiaSolarTexto").textContent = `${s}%`;
+      byId("retencaoTexto").textContent = `${Math.round(retencao)}%`;
+      byId("perdaTexto").textContent = `${Math.round(perda)}%`;
 
-  $("resetPiscina")?.addEventListener("click", () => {
-    solar.value = 75;
-    cobertura.value = 1;
-    vento.value = 25;
-    extra.value = 0;
-    atualizarPiscina();
-  });
+      byId("barraSolar").style.width = `${s}%`;
+      byId("barraRetencao").style.width = `${retencao}%`;
+      byId("barraPerda").style.width = `${perda}%`;
 
-  // =========================================================
-  // 4. SIMULADOR DE ROBÓTICA
-  // =========================================================
-  const sensorTemp = $("sensorTemperatura");
-  const sensorLuz = $("sensorLuminosidade");
-  const sensorNivel = $("sensorNivel");
+      let status = "A água está em uma faixa de temperatura moderada.";
+      if (temperatura >= 32) status = "A estimativa indica uma água mais aquecida.";
+      if (temperatura < 24) status = "A estimativa indica uma água mais fria.";
 
-  function atualizarRobo() {
-    if (!sensorTemp || !sensorLuz || !sensorNivel) return;
+      byId("statusPiscina").textContent = status;
 
-    const t = Number(sensorTemp.value);
-    const l = Number(sensorLuz.value);
-    const n = Number(sensorNivel.value);
+      let explicacao = "Ajuste os controles e observe o resultado.";
+      if (c < 30 && v > 60) {
+        explicacao = "Pouca cobertura e vento intenso favorecem a perda de calor.";
+      } else if (c > 70 && s > 60) {
+        explicacao = "Boa incidência solar e cobertura elevada favorecem o aquecimento e a conservação do calor.";
+      } else if (s < 20) {
+        explicacao = "Com pouca incidência solar, o ganho de energia térmica é menor.";
+      }
 
-    setText("sensorTemperaturaValor", `${t} °C`);
-    setText("sensorLuminosidadeValor", `${l}%`);
-    setText("sensorNivelValor", `${n}%`);
-
-    let estado = "Sistema em operação";
-    let resposta = "Bomba em modo de espera";
-    let registro = "Leituras dentro dos parâmetros definidos. Nenhuma ação necessária.";
-
-    if (n < 25) {
-      estado = "Nível baixo detectado";
-      resposta = "Bomba de abastecimento acionada";
-      registro = `Sensor de nível detectou ${n}%. Controlador acionou o abastecimento da piscina.`;
-    } else if (t < 22 && l > 40) {
-      estado = "Água abaixo da temperatura-alvo";
-      resposta = "Circulação pelo aquecedor solar ativada";
-      registro = `Temperatura de ${t} °C e luminosidade de ${l}%. Sistema priorizou o aquecimento solar.`;
-    } else if (t >= 32) {
-      estado = "Temperatura elevada detectada";
-      resposta = "Aquecimento desligado";
-      registro = `Temperatura de ${t} °C. Controlador interrompeu o aquecimento para evitar elevação adicional.`;
-    } else if (l < 20) {
-      estado = "Baixa luminosidade";
-      resposta = "Aquecimento solar em espera";
-      registro = `Luminosidade de ${l}%. O controlador identificou pouca energia solar disponível.`;
-    } else {
-      registro = `Sensores registraram ${t} °C, ${l}% de luminosidade e ${n}% de nível. Sistema em monitoramento.`;
+      byId("explicacaoPiscina").textContent = explicacao;
     }
 
-    setText("estadoControlador", estado);
-    setText("respostaAtuador", resposta);
-    setText("registroRobo", registro);
+    [solar, cobertura, vento, extra].forEach((controle) => {
+      controle.addEventListener("input", atualizar);
+    });
+
+    byId("resetPiscina")?.addEventListener("click", () => {
+      solar.value = 70;
+      cobertura.value = 80;
+      vento.value = 30;
+      extra.value = 0;
+      atualizar();
+    });
+
+    atualizar();
   }
 
-  [sensorTemp, sensorLuz, sensorNivel].forEach((control) => {
-    control?.addEventListener("input", atualizarRobo);
-    control?.addEventListener("change", atualizarRobo);
-  });
+  // 4. ROBÓTICA E SENSORES
+  function iniciarRobotica() {
+    const temperatura = byId("sensorTemperatura");
+    const luminosidade = byId("sensorLuminosidade");
+    const nivel = byId("sensorNivel");
 
-  // =========================================================
+    if (!temperatura || !luminosidade || !nivel) return;
+
+    const registro = byId("registroRobo");
+    let ultimoEstado = "";
+
+    function atualizar() {
+      const t = Number(temperatura.value);
+      const l = Number(luminosidade.value);
+      const n = Number(nivel.value);
+
+      byId("sensorTemperaturaValor").textContent = `${t} °C`;
+      byId("sensorLuminosidadeValor").textContent = `${l}%`;
+      byId("sensorNivelValor").textContent = `${n}%`;
+
+      const acoes = [];
+
+      if (t < 20) acoes.push("Temperatura baixa: avaliar acionamento do aquecimento.");
+      else if (t > 32) acoes.push("Temperatura alta: reduzir o aquecimento.");
+      else acoes.push("Temperatura dentro da faixa definida.");
+
+      if (l < 25) acoes.push("Pouca luminosidade: acender iluminação.");
+      else acoes.push("Luminosidade suficiente: iluminação desligada.");
+
+      if (n < 25) acoes.push("Nível baixo: acionar alerta de nível.");
+      else if (n > 90) acoes.push("Nível muito alto: interromper o abastecimento.");
+      else acoes.push("Nível de água adequado.");
+
+      byId("estadoControlador").textContent =
+        "Dados recebidos e analisados pelo controlador.";
+
+      byId("respostaAtuador").textContent = acoes.join(" ");
+
+      const estadoAtual = `${t}|${l}|${n}`;
+      if (estadoAtual !== ultimoEstado) {
+        ultimoEstado = estadoAtual;
+
+        const item = document.createElement("li");
+        item.textContent =
+          `Leitura: ${t} °C, luminosidade ${l}%, nível ${n}%.`;
+
+        registro.prepend(item);
+
+        while (registro.children.length > 5) {
+          registro.removeChild(registro.lastElementChild);
+        }
+      }
+    }
+
+    [temperatura, luminosidade, nivel].forEach((controle) => {
+      controle.addEventListener("input", atualizar);
+    });
+
+    atualizar();
+  }
+
   // 5. QUIZ
-  // =========================================================
-  const perguntas = [
-    {
-      categoria: "RADIAÇÃO TÉRMICA",
-      pergunta: "O que acontece com o pico de emissão de um corpo negro quando sua temperatura aumenta?",
-      alternativas: [
-        "Desloca-se para comprimentos de onda menores.",
-        "Desloca-se para comprimentos de onda maiores.",
-        "Permanece sempre no mesmo comprimento de onda.",
-        "A radiação deixa de ser emitida."
-      ],
-      correta: 0,
-      explicacao: "Pela lei de Wien, o aumento da temperatura desloca o pico para comprimentos de onda menores."
-    },
-    {
-      categoria: "EFEITO FOTOELÉTRICO",
-      pergunta: "O que determina se um fóton consegue liberar um elétron de um material?",
-      alternativas: [
-        "Somente a cor aparente do material.",
-        "A energia do fóton em relação à função trabalho.",
-        "A massa do material.",
-        "A distância entre a fonte de luz e o material."
-      ],
-      correta: 1,
-      explicacao: "A energia do fóton precisa ser igual ou maior que a função trabalho do material."
-    },
-    {
-      categoria: "ENERGIA SOLAR",
-      pergunta: "Qual é a principal função de um coletor solar térmico usado no aquecimento de piscinas?",
-      alternativas: [
-        "Transformar água em eletricidade.",
-        "Diminuir a temperatura da água.",
-        "Absorver energia solar e transferir calor para a água.",
-        "Impedir toda troca de energia com o ambiente."
-      ],
-      correta: 2,
-      explicacao: "O coletor absorve a radiação solar e transfere energia térmica para a água que circula pelo sistema."
-    },
-    {
-      categoria: "TRANSFERÊNCIA DE CALOR",
-      pergunta: "Por que uma cobertura térmica ajuda a piscina a conservar calor?",
-      alternativas: [
-        "Porque aumenta a velocidade do vento.",
-        "Porque ajuda a reduzir a evaporação e a perda de calor.",
-        "Porque transforma calor em luz.",
-        "Porque impede a incidência da gravidade."
-      ],
-      correta: 1,
-      explicacao: "A cobertura reduz principalmente a evaporação, que é uma importante forma de perda de energia térmica."
-    },
-    {
-      categoria: "ROBÓTICA",
-      pergunta: "Em um sistema automatizado, qual é a função do controlador?",
-      alternativas: [
-        "Apenas decorar o equipamento.",
-        "Armazenar água na piscina.",
-        "Substituir todos os sensores.",
-        "Interpretar os dados dos sensores e comandar os atuadores."
-      ],
-      correta: 3,
-      explicacao: "O controlador recebe e interpreta as informações dos sensores e decide quais ações os atuadores devem executar."
+  function iniciarQuiz() {
+    const perguntas = [
+      {
+        categoria: "Radiação de corpo negro",
+        pergunta: "O que caracteriza um corpo negro ideal?",
+        alternativas: [
+          "Reflete toda a luz que recebe.",
+          "Absorve toda a radiação que recebe.",
+          "Não emite energia térmica.",
+          "Só absorve luz azul."
+        ],
+        correta: 1,
+        explicacao: "Um corpo negro ideal absorve toda a radiação incidente e também emite radiação térmica."
+      },
+      {
+        categoria: "Lei de Wien",
+        pergunta: "Quando a temperatura de um corpo negro aumenta, o que acontece com o comprimento de onda de pico?",
+        alternativas: [
+          "Aumenta.",
+          "Permanece sempre igual.",
+          "Diminui.",
+          "Desaparece."
+        ],
+        correta: 2,
+        explicacao: "Pela lei de Wien, o comprimento de onda de máxima emissão é inversamente proporcional à temperatura."
+      },
+      {
+        categoria: "Efeito fotoelétrico",
+        pergunta: "O que é necessário para que ocorra a emissão de elétrons no efeito fotoelétrico?",
+        alternativas: [
+          "A energia do fóton deve atingir a função trabalho.",
+          "A luz precisa ser sempre vermelha.",
+          "O material precisa estar congelado.",
+          "A intensidade precisa ser zero."
+        ],
+        correta: 0,
+        explicacao: "A energia de cada fóton precisa ser igual ou maior que a função trabalho do material."
+      },
+      {
+        categoria: "Energia solar",
+        pergunta: "Qual é a principal função de um coletor solar térmico em uma piscina?",
+        alternativas: [
+          "Transformar água em eletricidade.",
+          "Absorver energia solar e transferir calor para a água.",
+          "Diminuir a temperatura da piscina.",
+          "Produzir vento."
+        ],
+        correta: 1,
+        explicacao: "O coletor térmico absorve energia solar e transfere calor para a água que circula pelo sistema."
+      },
+      {
+        categoria: "Transferência de calor",
+        pergunta: "Por que uma capa térmica ajuda a conservar a temperatura da piscina?",
+        alternativas: [
+          "Porque aumenta a evaporação.",
+          "Porque impede a entrada de luz solar.",
+          "Porque reduz principalmente a evaporação e a perda de calor.",
+          "Porque transforma calor em água."
+        ],
+        correta: 2,
+        explicacao: "A cobertura reduz a evaporação e ajuda a diminuir as perdas de energia térmica."
+      },
+      {
+        categoria: "Robótica",
+        pergunta: "Qual é a função dos sensores em um sistema automatizado?",
+        alternativas: [
+          "Executar movimentos mecânicos diretamente.",
+          "Coletar informações do ambiente.",
+          "Substituir todas as partes do robô.",
+          "Armazenar energia solar."
+        ],
+        correta: 1,
+        explicacao: "Os sensores coletam dados do ambiente, que são enviados ao controlador para orientar as ações do sistema."
+      }
+    ];
+
+    const conteudo = byId("quizConteudo");
+    const final = byId("quizFinal");
+    const perguntaEl = byId("quizPergunta");
+    const alternativasEl = byId("quizAlternativas");
+    const feedbackEl = byId("quizFeedback");
+    const proximo = byId("quizProximo");
+
+    if (!conteudo || !perguntaEl || !alternativasEl || !proximo) return;
+
+    let indice = 0;
+    let pontuacao = 0;
+    let respondeu = false;
+
+    function mostrarPergunta() {
+      respondeu = false;
+
+      const atual = perguntas[indice];
+
+      conteudo.hidden = false;
+      final.hidden = true;
+
+      byId("quizProgressoTexto").textContent =
+        `Pergunta ${indice + 1} de ${perguntas.length}`;
+
+      byId("quizPontuacao").textContent = pontuacao;
+      byId("quizBarra").style.width =
+        `${(indice / perguntas.length) * 100}%`;
+
+      byId("quizCategoria").textContent = atual.categoria;
+      perguntaEl.textContent = atual.pergunta;
+      feedbackEl.textContent = "";
+
+      proximo.disabled = true;
+      proximo.textContent =
+        indice === perguntas.length - 1
+          ? "Ver resultado →"
+          : "Próxima pergunta →";
+
+      alternativasEl.innerHTML = "";
+
+      atual.alternativas.forEach((alternativa, i) => {
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "quiz-option";
+        botao.textContent = alternativa;
+
+        botao.addEventListener("click", () => selecionarResposta(i));
+
+        alternativasEl.appendChild(botao);
+      });
     }
+
+    function selecionarResposta(escolha) {
+      if (respondeu) return;
+      respondeu = true;
+
+      const atual = perguntas[indice];
+      const botoes = alternativasEl.querySelectorAll("button");
+
+      botoes.forEach((botao, i) => {
+        botao.disabled = true;
+
+        if (i === atual.correta) {
+          botao.classList.add("correct");
+        } else if (i === escolha) {
+          botao.classList.add("incorrect");
+        }
+      });
+
+      if (escolha === atual.correta) {
+        pontuacao++;
+        feedbackEl.textContent = `Correto! ${atual.explicacao}`;
+        feedbackEl.style.color = "#28785d";
+      } else {
+        feedbackEl.textContent = `Não foi dessa vez. ${atual.explicacao}`;
+        feedbackEl.style.color = "#a84c66";
+      }
+
+      byId("quizPontuacao").textContent = pontuacao;
+      proximo.disabled = false;
+    }
+
+    function terminarQuiz() {
+      conteudo.hidden = true;
+      final.hidden = false;
+      byId("quizBarra").style.width = "100%";
+
+      byId("quizProgressoTexto").textContent = "Quiz concluído";
+
+      byId("quizResultadoFinal").textContent =
+        `Você acertou ${pontuacao} de ${perguntas.length} perguntas. ` +
+        (pontuacao === perguntas.length
+          ? "Excelente! Você dominou os conteúdos."
+          : "Continue explorando o AquaLuz Lab para aprender ainda mais.");
+    }
+
+    proximo.addEventListener("click", () => {
+      if (!respondeu) return;
+
+      if (indice < perguntas.length - 1) {
+        indice++;
+        mostrarPergunta();
+      } else {
+        terminarQuiz();
+      }
+    });
+
+    byId("quizReiniciar")?.addEventListener("click", () => {
+      indice = 0;
+      pontuacao = 0;
+      mostrarPergunta();
+    });
+
+    mostrarPergunta();
+  }
+
+  // INICIALIZAÇÃO DOS COMPONENTES
+  // Um erro em um simulador não impede os outros de funcionar.
+  const componentes = [
+    ["Corpo negro", iniciarCorpoNegro],
+    ["Efeito fotoelétrico", iniciarFotoeletrico],
+    ["Piscina", iniciarPiscina],
+    ["Robótica", iniciarRobotica],
+    ["Quiz", iniciarQuiz]
   ];
 
-  let perguntaAtual = 0;
-  let pontos = 0;
-  let respondeu = false;
-
-  function carregarPergunta() {
-    const pergunta = perguntas[perguntaAtual];
-    if (!pergunta) return;
-
-    respondeu = false;
-    $("quizConteudo").hidden = false;
-    $("quizFinal").hidden = true;
-    $("quizProximo").disabled = true;
-    $("quizProximo").textContent = perguntaAtual === perguntas.length - 1
-      ? "Ver resultado →"
-      : "Próxima pergunta →";
-
-    setText("quizProgressoTexto", `PERGUNTA ${perguntaAtual + 1} DE ${perguntas.length}`);
-    setText("quizPontuacao", `Pontos: ${pontos}`);
-    setText("quizCategoria", pergunta.categoria);
-    setText("quizPergunta", pergunta.pergunta);
-    setText("quizFeedback", "");
-
-    const barra = $("quizBarra");
-    if (barra) barra.style.width = `${(perguntaAtual / perguntas.length) * 100}%`;
-
-    const alternativas = $("quizAlternativas");
-    alternativas.innerHTML = "";
-
-    pergunta.alternativas.forEach((alternativa, index) => {
-      const botao = document.createElement("button");
-      botao.type = "button";
-      botao.className = "quiz-option";
-      botao.textContent = `${String.fromCharCode(65 + index)}. ${alternativa}`;
-      botao.addEventListener("click", () => selecionarResposta(index));
-      alternativas.appendChild(botao);
-    });
-  }
-
-  function selecionarResposta(indice) {
-    if (respondeu) return;
-    respondeu = true;
-
-    const pergunta = perguntas[perguntaAtual];
-    const botoes = $("quizAlternativas").querySelectorAll("button");
-    botoes.forEach((botao, i) => {
-      botao.disabled = true;
-      if (i === pergunta.correta) botao.classList.add("correct");
-      if (i === indice && i !== pergunta.correta) botao.classList.add("incorrect");
-    });
-
-    const acertou = indice === pergunta.correta;
-    if (acertou) pontos++;
-
-    const feedback = $("quizFeedback");
-    feedback.className = `quiz-feedback ${acertou ? "good" : "bad"}`;
-    feedback.textContent = `${acertou ? "Resposta correta! " : "Não foi dessa vez. "}${pergunta.explicacao}`;
-
-    setText("quizPontuacao", `Pontos: ${pontos}`);
-    $("quizProximo").disabled = false;
-  }
-
-  function avancarQuiz() {
-    if (!respondeu) return;
-
-    perguntaAtual++;
-    if (perguntaAtual < perguntas.length) {
-      carregarPergunta();
-      return;
+  componentes.forEach(([nome, iniciar]) => {
+    try {
+      iniciar();
+    } catch (erro) {
+      console.error(`Erro no componente ${nome}:`, erro);
     }
-
-    $("quizConteudo").hidden = true;
-    $("quizFinal").hidden = false;
-    $("quizBarra").style.width = "100%";
-    setText("quizProgressoTexto", "QUIZ CONCLUÍDO");
-    setText("quizResultadoFinal", `Você acertou ${pontos} de ${perguntas.length} perguntas. ${
-      pontos === perguntas.length ? "Excelente! Você dominou os conceitos." :
-      pontos >= 3 ? "Bom trabalho! Você já compreendeu boa parte dos conceitos." :
-      "Continue explorando o laboratório e tente novamente."
-    }`);
-  }
-
-  function reiniciarQuiz() {
-    perguntaAtual = 0;
-    pontos = 0;
-    respondeu = false;
-    carregarPergunta();
-  }
-
-  $("quizProximo")?.addEventListener("click", avancarQuiz);
-  $("quizReiniciar")?.addEventListener("click", reiniciarQuiz);
-
-  // =========================================================
-  // 6. INICIALIZAÇÃO E REDIMENSIONAMENTO
-  // =========================================================
-  atualizarFotoeletrico();
-  atualizarPiscina();
-  atualizarRobo();
-  carregarPergunta();
-
-  // Aguarda o layout calcular as dimensões reais dos gráficos.
-  requestAnimationFrame(() => {
-    desenharGraficoCorpo();
-    requestAnimationFrame(desenharGraficoCorpo);
   });
 
-  window.addEventListener("resize", desenharGraficoCorpo);
-
-  if (canvasCorpo && "ResizeObserver" in window) {
-    const observador = new ResizeObserver(() => desenharGraficoCorpo());
-    observador.observe(canvasCorpo);
-  }
+  console.info("AquaLuz Lab: JavaScript carregado e inicializado.");
 });
