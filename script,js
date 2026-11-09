@@ -4,7 +4,23 @@
 document.addEventListener("DOMContentLoaded", () => {
   const $ = (id) => document.getElementById(id);
 
-  // MENU PARA CELULAR
+  // Confere se os elementos essenciais existem.
+  const elementosEssenciais = [
+    "sol", "cobertura", "aquecimento",
+    "graficoCorpoNegro", "graficoSolar",
+    "temperaturaCorpo", "quizProximo",
+    "opcoesQuiz", "quizPergunta",
+    "temperaturaSensor", "luzSensor", "nivelSensor"
+  ];
+
+  const ausentes = elementosEssenciais.filter((id) => !$(id));
+
+  if (ausentes.length) {
+    console.error("AquaLuz Lab: elementos não encontrados:", ausentes);
+    return;
+  }
+
+  // MENU
   const menuBotao = $("menuBotao");
   const menu = $("menu");
 
@@ -34,15 +50,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const cobertura = Number($("cobertura").value);
     const aquecimento = Number($("aquecimento").value);
 
-    $("solValor").textContent = sol + "%";
-    $("coberturaValor").textContent = cobertura + "%";
-    $("aquecimentoValor").textContent = aquecimento + "%";
+    $("solValor").textContent = `${sol}%`;
+    $("coberturaValor").textContent = `${cobertura}%`;
+    $("aquecimentoValor").textContent = `${aquecimento}%`;
 
-    $("energiaSolar").textContent = sol + "%";
-    $("calorConservado").textContent = cobertura + "%";
-    $("energiaAuxiliar").textContent = aquecimento + "%";
+    $("energiaSolar").textContent = `${sol}%`;
+    $("calorConservado").textContent = `${cobertura}%`;
+    $("energiaAuxiliar").textContent = `${aquecimento}%`;
 
-    // Modelo didático ilustrativo, não uma previsão física real.
+    // Modelo educativo ilustrativo.
     const temperatura =
       18 +
       sol * 0.10 +
@@ -58,13 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let mensagem;
 
     if (sol < 25 && aquecimento < 25) {
-      mensagem = "Pouca energia disponível: o aquecimento será limitado.";
+      mensagem = "Pouca energia disponível. O aquecimento será limitado.";
     } else if (cobertura >= 70) {
-      mensagem = "Boa conservação de calor no modelo simulado!";
+      mensagem = "Boa conservação de calor! A cobertura reduz as perdas.";
     } else if (sol >= 70) {
-      mensagem = "A contribuição solar está elevada.";
+      mensagem = "A contribuição da energia solar está elevada.";
     } else {
-      mensagem = "Ajuste os controles e compare os resultados.";
+      mensagem = "Experimente alterar os controles e comparar os resultados.";
     }
 
     $("mensagemPiscina").textContent = mensagem;
@@ -82,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     atualizarPiscina();
   });
 
-  // DIMENSIONAMENTO DOS GRÁFICOS
+  // CONFIGURAÇÃO DOS GRÁFICOS
   function prepararCanvas(canvas) {
     const largura = Math.max(260, canvas.clientWidth);
     const altura = Math.max(200, canvas.clientHeight);
@@ -97,22 +113,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return { ctx, largura, altura };
   }
 
-  function texto(ctx, valor, x, y, cor = "#b9c5e3", tamanho = 11) {
+  function escrever(ctx, valor, x, y, cor = "#b9c5e3", tamanho = 11) {
     ctx.fillStyle = cor;
     ctx.font = `${tamanho}px Arial`;
     ctx.fillText(valor, x, y);
   }
 
-  // GRÁFICO DA RADIAÇÃO DO CORPO NEGRO
+  // RADIAÇÃO DO CORPO NEGRO
   function desenharGraficoCorpoNegro() {
     const canvas = $("graficoCorpoNegro");
-    if (!canvas) return;
-
     const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
-    const esquerda = 43;
+
+    const esquerda = 45;
     const direita = 12;
-    const topo = 18;
-    const baixo = 37;
+    const topo = 25;
+    const baixo = 38;
     const gw = w - esquerda - direita;
     const gh = h - topo - baixo;
 
@@ -120,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#0b142b";
     ctx.fillRect(0, 0, w, h);
 
-    ctx.strokeStyle = "rgba(185,197,227,.13)";
+    ctx.strokeStyle = "rgba(185,197,227,.16)";
     ctx.lineWidth = 1;
 
     for (let i = 0; i <= 4; i++) {
@@ -139,18 +154,17 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.stroke();
     }
 
-    texto(ctx, "Intensidade relativa", 8, 13, "#b9c5e3", 10);
-    texto(ctx, "Comprimento de onda (nm)", w / 2 - 70, h - 9, "#b9c5e3", 10);
+    escrever(ctx, "Intensidade relativa", 8, 14, "#b9c5e3", 10);
+    escrever(ctx, "Comprimento de onda (nm)", w / 2 - 70, h - 8, "#b9c5e3", 10);
 
     [200, 400, 600, 800, 1000].forEach((v, i) => {
-      texto(ctx, String(v), esquerda + gw * i / 4 - 10, h - 21);
+      escrever(ctx, String(v), esquerda + gw * i / 4 - 10, h - 21);
     });
 
     const T = Number($("temperaturaCorpo").value);
-    $("temperaturaCorpoValor").textContent = T + " K";
+    $("temperaturaCorpoValor").textContent = `${T} K`;
 
-    // Lei de Planck: intensidade espectral relativa.
-    // Lambda é medido em metros.
+    // Lei de Planck.
     function planck(lambdaNm, temperatura) {
       const lambda = lambdaNm * 1e-9;
       const c2 = 1.4387769e-2;
@@ -164,12 +178,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const temperaturas = [
-      { valor: 3000, cor: "#a78bfa" },
-      { valor: T, cor: "#56e5f2" },
-      { valor: 5500, cor: "#7cf7c4" }
+      { valor: 3000, cor: "#a78bfa", nome: "3000 K" },
+      { valor: T, cor: "#56e5f2", nome: `${T} K` },
+      { valor: 5500, cor: "#7cf7c4", nome: "5500 K" }
     ];
 
-    const curvas = temperaturas.map((serie) => {
+    temperaturas.forEach((serie, indice) => {
       const pontos = [];
 
       for (let lambda = 200; lambda <= 1000; lambda += 4) {
@@ -181,23 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const maximo = Math.max(...pontos.map(p => p.intensidade)) || 1;
 
-      return {
-        ...serie,
-        pontos: pontos.map(p => ({
-          lambda: p.lambda,
-          intensidade: p.intensidade / maximo
-        }))
-      };
-    });
-
-    curvas.forEach((serie) => {
       ctx.beginPath();
       ctx.strokeStyle = serie.cor;
-      ctx.lineWidth = serie.valor === T ? 2.8 : 1.6;
+      ctx.lineWidth = indice === 1 ? 2.8 : 1.7;
 
-      serie.pontos.forEach((p, i) => {
+      pontos.forEach((p, i) => {
         const x = esquerda + ((p.lambda - 200) / 800) * gw;
-        const y = topo + gh * (1 - p.intensidade);
+        const y = topo + gh * (1 - p.intensidade / maximo);
 
         if (i === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
@@ -206,9 +210,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.stroke();
     });
 
-    texto(ctx, "3000 K", esquerda + 8, topo + 15, "#a78bfa", 10);
-    texto(ctx, T + " K", esquerda + 75, topo + 15, "#56e5f2", 10);
-    texto(ctx, "5500 K", esquerda + 135, topo + 15, "#7cf7c4", 10);
+    escrever(ctx, "3000 K", esquerda + 5, topo + 12, "#a78bfa", 10);
+    escrever(ctx, `${T} K`, esquerda + 75, topo + 12, "#56e5f2", 10);
+    escrever(ctx, "5500 K", esquerda + 145, topo + 12, "#7cf7c4", 10);
   }
 
   $("temperaturaCorpo").addEventListener(
@@ -216,16 +220,15 @@ document.addEventListener("DOMContentLoaded", () => {
     desenharGraficoCorpoNegro
   );
 
-  // GRÁFICO DA CONTRIBUIÇÃO SOLAR
+  // CONTRIBUIÇÃO SOLAR
   function desenharGraficoSolar() {
     const canvas = $("graficoSolar");
-    if (!canvas) return;
-
     const { ctx, largura: w, altura: h } = prepararCanvas(canvas);
-    const esquerda = 42;
+
+    const esquerda = 43;
     const direita = 14;
-    const topo = 22;
-    const baixo = 36;
+    const topo = 25;
+    const baixo = 38;
     const gw = w - esquerda - direita;
     const gh = h - topo - baixo;
 
@@ -233,64 +236,58 @@ document.addEventListener("DOMContentLoaded", () => {
     ctx.fillStyle = "#0b142b";
     ctx.fillRect(0, 0, w, h);
 
-    ctx.strokeStyle = "rgba(185,197,227,.13)";
+    ctx.strokeStyle = "rgba(185,197,227,.16)";
 
     for (let i = 0; i <= 4; i++) {
       const y = topo + gh * i / 4;
+
       ctx.beginPath();
       ctx.moveTo(esquerda, y);
       ctx.lineTo(w - direita, y);
       ctx.stroke();
 
-      texto(ctx, String(100 - i * 25), 7, y + 4);
+      escrever(ctx, String(100 - i * 25), 8, y + 4);
     }
 
     for (let i = 0; i <= 4; i++) {
       const x = esquerda + gw * i / 4;
+
       ctx.beginPath();
       ctx.moveTo(x, topo);
       ctx.lineTo(x, h - baixo);
       ctx.stroke();
 
-      texto(ctx, String(i * 25), x - 7, h - 16);
+      escrever(ctx, String(i * 25), x - 7, h - 16);
     }
 
-    texto(ctx, "Contribuição (%)", 8, 13, "#b9c5e3", 10);
-    texto(ctx, "Intensidade solar (%)", w / 2 - 63, h - 3, "#b9c5e3", 10);
+    escrever(ctx, "Contribuição (%)", 8, 14, "#b9c5e3", 10);
+    escrever(ctx, "Intensidade solar (%)", w / 2 - 63, h - 5, "#b9c5e3", 10);
 
     const solAtual = Number($("sol").value);
-    const pontos = [];
-
-    for (let x = 0; x <= 100; x += 2) {
-      pontos.push({
-        x,
-        y: x * 0.8
-      });
-    }
 
     ctx.beginPath();
     ctx.strokeStyle = "#a78bfa";
     ctx.lineWidth = 2.5;
 
-    pontos.forEach((p, i) => {
-      const x = esquerda + (p.x / 100) * gw;
-      const y = topo + (1 - p.y / 100) * gh;
+    for (let x = 0; x <= 100; x += 2) {
+      const px = esquerda + (x / 100) * gw;
+      const py = topo + (1 - (x * 0.8) / 100) * gh;
 
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    });
+      if (x === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
 
     ctx.stroke();
 
-    const marcadorX = esquerda + solAtual / 100 * gw;
-    const marcadorY = topo + (1 - solAtual * 0.8 / 100) * gh;
+    const marcadorX = esquerda + (solAtual / 100) * gw;
+    const marcadorY = topo + (1 - (solAtual * 0.8) / 100) * gh;
 
     ctx.beginPath();
     ctx.arc(marcadorX, marcadorY, 5, 0, Math.PI * 2);
     ctx.fillStyle = "#56e5f2";
     ctx.fill();
 
-    texto(
+    escrever(
       ctx,
       `Sol atual: ${solAtual}%`,
       Math.max(esquerda + 5, Math.min(marcadorX - 35, w - 100)),
@@ -300,7 +297,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // SENSORES E TOMADA DE DECISÃO
+  // ROBÓTICA E SENSORES
   const sensores = ["temperaturaSensor", "luzSensor", "nivelSensor"];
 
   function atualizarDecisao() {
@@ -308,9 +305,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const luz = Number($("luzSensor").value);
     const nivel = Number($("nivelSensor").value);
 
-    $("temperaturaSensorValor").textContent = temperatura + " °C";
-    $("luzSensorValor").textContent = luz + "%";
-    $("nivelSensorValor").textContent = nivel + "%";
+    $("temperaturaSensorValor").textContent = `${temperatura} °C`;
+    $("luzSensorValor").textContent = `${luz}%`;
+    $("nivelSensorValor").textContent = `${nivel}%`;
 
     let titulo = "Sistema em monitoramento";
     let decisao = "Condições dentro dos limites configurados.";
@@ -318,11 +315,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (nivel < 20) {
       titulo = "Nível de água baixo";
-      decisao = "O sensor detectou nível reduzido. Recomenda-se verificar o nível antes de acionar equipamentos.";
+      decisao = "O sensor detectou nível reduzido. É necessário verificar a água antes de acionar equipamentos.";
       status = "● Atenção ao nível";
     } else if (temperatura >= 38) {
       titulo = "Temperatura elevada";
-      decisao = "O sistema recomenda verificar a temperatura e reduzir o aquecimento, se necessário.";
+      decisao = "O sistema recomenda verificar a temperatura e avaliar a redução do aquecimento.";
       status = "● Atenção à temperatura";
     } else if (luz < 20) {
       titulo = "Pouca luminosidade";
@@ -330,7 +327,7 @@ document.addEventListener("DOMContentLoaded", () => {
       status = "● Pouca luz disponível";
     } else {
       titulo = "Condições monitoradas";
-      decisao = "Os sensores estão enviando dados. O sistema não identificou os alertas configurados.";
+      decisao = "Os sensores estão enviando dados. Nenhum alerta foi identificado.";
       status = "● Monitoramento ativo";
     }
 
@@ -340,6 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const registro = $("logSistema");
     const linha = document.createElement("li");
+
     linha.textContent =
       `${temperatura} °C · luz ${luz}% · água ${nivel}%`;
 
@@ -365,13 +363,13 @@ document.addEventListener("DOMContentLoaded", () => {
         "A massa do fóton"
       ],
       correta: 1,
-      explicacao: "A energia do fóton é dada por E = h · f: ela é proporcional à frequência."
+      explicacao: "A energia do fóton é dada por E = h · f. Quanto maior a frequência, maior a energia."
     },
     {
       pergunta: "O que acontece quando a temperatura de um corpo negro aumenta?",
       opcoes: [
         "Ele deixa de emitir radiação",
-        "A radiação sempre desaparece",
+        "A radiação desaparece",
         "O pico da emissão se desloca para comprimentos de onda menores",
         "Sua temperatura diminui automaticamente"
       ],
@@ -387,7 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Transformar água em eletricidade"
       ],
       correta: 1,
-      explicacao: "A cobertura ajuda a reduzir perdas de calor, principalmente as associadas à evaporação."
+      explicacao: "A cobertura reduz a perda de calor, especialmente aquela associada à evaporação."
     },
     {
       pergunta: "Qual é a função de um sensor em um sistema robótico?",
@@ -404,21 +402,23 @@ document.addEventListener("DOMContentLoaded", () => {
       pergunta: "Qual tecnologia converte luz solar em energia elétrica?",
       opcoes: [
         "Cobertura térmica comum",
-        "Termômetro de mercúrio",
+        "Termômetro",
         "Painel fotovoltaico",
         "Sensor de nível"
       ],
       correta: 2,
-      explicacao: "Células fotovoltaicas convertem parte da energia da luz em energia elétrica."
+      explicacao: "As células fotovoltaicas convertem parte da energia luminosa em energia elétrica."
     }
   ];
 
   let indice = 0;
   let pontos = 0;
   let respondeu = false;
+  let finalizado = false;
 
   function mostrarPergunta() {
     respondeu = false;
+    finalizado = false;
 
     const atual = perguntas[indice];
 
@@ -442,15 +442,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     atual.opcoes.forEach((opcao, i) => {
       const botao = document.createElement("button");
+
       botao.type = "button";
       botao.className = "opcao";
       botao.textContent = `${String.fromCharCode(65 + i)}. ${opcao}`;
 
       botao.addEventListener("click", () => {
-        if (respondeu) return;
+        if (respondeu || finalizado) return;
+
         respondeu = true;
 
         const botoes = opcoes.querySelectorAll("button");
+
         botoes.forEach((b) => {
           b.disabled = true;
         });
@@ -458,11 +461,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (i === atual.correta) {
           pontos++;
           botao.classList.add("certa");
-          $("feedbackQuiz").textContent = "✓ Acertou! " + atual.explicacao;
+          $("feedbackQuiz").textContent =
+            "✓ Acertou! " + atual.explicacao;
         } else {
           botao.classList.add("errada");
           botoes[atual.correta].classList.add("certa");
-          $("feedbackQuiz").textContent = "Ainda não! " + atual.explicacao;
+          $("feedbackQuiz").textContent =
+            "Não foi dessa vez. " + atual.explicacao;
         }
 
         $("quizPontos").textContent = `Pontos: ${pontos}`;
@@ -476,50 +481,52 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function mostrarResultado() {
+    finalizado = true;
+
+    $("quizContador").textContent = "Desafio concluído!";
+    $("quizPergunta").textContent =
+      `Você acertou ${pontos} de ${perguntas.length} perguntas!`;
+
+    $("quizBarra").style.width = "100%";
+    $("opcoesQuiz").replaceChildren();
+
+    $("feedbackQuiz").textContent =
+      pontos === perguntas.length
+        ? "Excelente! Você acertou todas as perguntas!"
+        : "Desafio concluído! Revise os conceitos e tente novamente.";
+
+    $("quizProximo").textContent = "Jogar novamente ↻";
+    $("quizProximo").disabled = false;
+  }
+
   $("quizProximo").addEventListener("click", () => {
-    if (!respondeu) return;
-
-    indice++;
-
-    if (indice >= perguntas.length) {
-      $("quizContador").textContent = "Desafio concluído!";
-      $("quizPergunta").textContent =
-        `Você acertou ${pontos} de ${perguntas.length} perguntas!`;
-
-      $("quizBarra").style.width = "100%";
-      $("opcoesQuiz").replaceChildren();
-      $("feedbackQuiz").textContent =
-        pontos === perguntas.length
-          ? "Perfeito! Você dominou todos os desafios. ✨"
-          : "Muito bem por chegar até aqui! Revise os conceitos e tente novamente.";
-
-      $("quizProximo").textContent = "Jogar novamente ↻";
-      $("quizProximo").disabled = false;
-      respondeu = true;
-      return;
-    }
-
-    mostrarPergunta();
-  });
-
-  // O botão vira opção de reiniciar após o fim.
-  $("quizProximo").addEventListener("click", () => {
-    if (
-      indice >= perguntas.length &&
-      respondeu
-    ) {
+    if (finalizado) {
       indice = 0;
       pontos = 0;
       mostrarPergunta();
+      return;
     }
+
+    if (!respondeu) return;
+
+    if (indice === perguntas.length - 1) {
+      mostrarResultado();
+      return;
+    }
+
+    indice++;
+    mostrarPergunta();
   });
 
   // INICIALIZAÇÃO
   atualizarPiscina();
   atualizarDecisao();
   mostrarPergunta();
+  desenharGraficoCorpoNegro();
+  desenharGraficoSolar();
 
-  // Atualiza o tamanho dos gráficos ao redimensionar a janela.
+  // REDIMENSIONAMENTO DOS GRÁFICOS
   let temporizadorRedesenho;
 
   window.addEventListener("resize", () => {
@@ -528,9 +535,8 @@ document.addEventListener("DOMContentLoaded", () => {
     temporizadorRedesenho = setTimeout(() => {
       desenharGraficoCorpoNegro();
       desenharGraficoSolar();
-    }, 120);
+    }, 150);
   });
 
-  desenharGraficoCorpoNegro();
-  desenharGraficoSolar();
+  console.log("AquaLuz Lab iniciado com sucesso!");
 });
